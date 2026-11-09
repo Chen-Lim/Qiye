@@ -10,11 +10,18 @@
 
 **Chrome Manifest V3 · 本地存储 · 无需注册 · MIT 许可**
 
-[让 Agent 帮你安装](#让-agent-帮你安装) · [手动安装](#从源码安装)
+[下载插件](https://github.com/Maxine0917/Qiye/releases/latest/download/TabNest-Chrome.zip) · [让 Agent 帮你安装](#让-agent-帮你安装) · [安装步骤](#从插件包安装) · [版本说明](https://github.com/Maxine0917/Qiye/releases/latest)
+
+![栖页操作演示：点击书签保存网页，勾选移入已查看，再展开查看记录](docs/assets/save-and-viewed.gif)
+
+*动图基于实际扩展的操作截图制作，添加了鼠标与步骤提示；使用独立浏览器中的演示数据。*
+
+<details>
+<summary>查看静态工作台截图</summary>
 
 ![栖页工作台：按网站整理标签页，右侧展示稍后查看与已查看](docs/assets/workspace.png)
 
-*截图来自实际扩展，使用独立测试浏览器中的演示网页，不包含个人浏览记录。*
+</details>
 
 ## 为什么做栖页
 
@@ -61,7 +68,12 @@ Agent 会帮你准备安装文件；Chrome 中的加载操作仍需你确认。�
 
 ### 从插件包安装
 
-如果你拿到的是 `栖页-插件.zip`，先解压，再按上面的步骤加载含 `manifest.json` 的目录。Chrome 的「加载已解压的扩展程序」不能直接选择 ZIP 文件。
+1. [下载最新版 TabNest-Chrome.zip](https://github.com/Maxine0917/Qiye/releases/latest/download/TabNest-Chrome.zip)，解压到长期保留的目录。
+2. 在 Chrome 地址栏输入 `chrome://extensions`，打开右上角的**开发者模式**。
+3. 点击**加载已解压的扩展程序**，选择解压后含 `manifest.json` 的目录。
+4. 新建一个标签页，进入栖页。
+
+Chrome 的「加载已解压的扩展程序」不能直接选择 ZIP 文件。通过本地脚本或 Actions 获得的 `栖页-插件.zip` 使用相同的安装方式。下载源码请前往 [Releases](https://github.com/Maxine0917/Qiye/releases/latest)，选择 `TabNest-Source.zip`。
 
 ### 更新已有安装
 

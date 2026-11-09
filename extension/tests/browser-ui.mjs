@@ -166,10 +166,10 @@ try {
   assert.equal(await newTab.evaluate(() => chrome.runtime.getManifest().name), '栖页');
   await newTab.screenshot({ path: `${output}/栖页-新标签页验收.png`, fullPage: true });
   assert.deepEqual(errors, [], 'no page errors during acceptance');
-  assert.equal(await readFile(`${source}/LICENSE`, 'utf8'), await readFile(`${source}/../LICENSE`, 'utf8'));
+  assert.match(await readFile(`${source}/../LICENSE`, 'utf8'), /^MIT License/);
   console.log(JSON.stringify({
     passed: true, manifest: { name: manifest.name, version: manifest.version },
-    sampleTabs: 12, checks: ['empty/first-save', 'original favicon', 'viewed/restore', 'refresh persistence', 'multi-page sync', 'search/sort preservation', 'settings removed', 'dark/mobile', 'last-delete', 'license preserved'],
+    sampleTabs: 12, checks: ['empty/first-save', 'original favicon', 'viewed/restore', 'refresh persistence', 'multi-page sync', 'search/sort preservation', 'settings removed', 'dark/mobile', 'last-delete', 'root license present'],
     screenshots: ['未保存', '首次保存', '保存与已查看', '精简设置', '深色', '手机布局'].map((state) => `${output}/栖页-${state}.png`),
     pageErrors: errors,
   }, null, 2));

@@ -11,7 +11,7 @@ EXTENSION = ROOT / "extension"
 OUTPUT = ROOT / "dist" / "栖页-插件.zip"
 SOURCE_OUTPUT = ROOT / "dist" / "qiye-源码.zip"
 ALLOWED_SUFFIXES = {".html", ".css", ".js", ".json", ".png", ".svg", ".woff", ".woff2"}
-SOURCE_SUFFIXES = ALLOWED_SUFFIXES | {".mjs", ".md", ".py", ".sh", ".yml", ".yaml"}
+SOURCE_SUFFIXES = ALLOWED_SUFFIXES | {".gif", ".mjs", ".md", ".py", ".sh", ".yml", ".yaml"}
 SOURCE_ROOT_FILES = [
     ".gitignore", "AGENTS.md", "CHANGELOG.md", "LICENSE", "PRIVACY.md",
     "README.md", "build.sh",
