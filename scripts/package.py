@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Build installable 栖页 and GitHub-ready source archives."""
 import json
+import re
 import tempfile
 import zipfile
 from pathlib import Path
@@ -16,6 +17,23 @@ SOURCE_ROOT_FILES = [
     "README.md", "build.sh",
 ]
 SOURCE_DIRECTORIES = [".github", "docs", "extension", "scripts"]
+MIT_LICENSE_BODY = """Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE."""
 
 
 def validate():
@@ -24,13 +42,16 @@ def validate():
         manifest["name"], manifest.get("short_name"), manifest["action"]["default_title"]
     )):
         raise ValueError("发布包名称必须为栖页")
-    license_text = (ROOT / "LICENSE").read_text()
-    if (EXTENSION / "LICENSE").read_text() != license_text:
+    license_text = (ROOT / "LICENSE").read_text(encoding="utf-8")
+    if (EXTENSION / "LICENSE").read_text(encoding="utf-8") != license_text:
         raise ValueError("项目与插件 LICENSE 必须一致")
-    required = ["Copyright (c) 2026 Zara Zhang", "Copyright (c) 2026 dengduck",
-                "Permission is hereby granted", "THE SOFTWARE IS PROVIDED"]
-    if not all(part in license_text for part in required):
-        raise ValueError("许可证声明不完整")
+    if not any(re.fullmatch(
+        r"Copyright\s+(?:\(c\)|©)\s+\d{4}(?:\s*-\s*\d{4})?\s+\S.*",
+        line.strip(), re.IGNORECASE,
+    ) for line in license_text.splitlines()):
+        raise ValueError("许可证缺少有效的版权声明")
+    if " ".join(MIT_LICENSE_BODY.split()) not in " ".join(license_text.split()):
+        raise ValueError("MIT 许可正文不完整")
 
 
 def runtime_files():
