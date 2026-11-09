@@ -1,4 +1,4 @@
-import { getHostname, isHomepage } from '../utils/domain.js';
+import { getTabGroupKey, isWorkbenchUrl, WORKBENCH_GROUP, isHomepage } from '../utils/domain.js';
 import { normalizeUrl } from '../../shared/hostname.js';
 import { updateDupeBadge } from '../components/tabChip.js';
 import { updateDupeButton } from '../components/domainCard.js';
@@ -6,7 +6,7 @@ import { updateDupeButton } from '../components/domainCard.js';
 export function buildDupeMap(currentTabs) {
   const urlMap = new Map();
   for (const [id, info] of currentTabs) {
-    const normalized = normalizeUrl(info.url);
+    const normalized = isWorkbenchUrl(info.url) ? WORKBENCH_GROUP : normalizeUrl(info.url);
     if (!normalized) continue;
     if (!urlMap.has(normalized)) urlMap.set(normalized, []);
     urlMap.get(normalized).push(id);
@@ -21,7 +21,7 @@ export function getDuplicateTabIds(currentTabs, hostname) {
     if (hostname) {
       const tab = currentTabs.get(ids[0]);
       if (!tab) continue;
-      const host = isHomepage(tab.url) ? '__homepages' : getHostname(tab.url);
+      const host = isHomepage(tab.url) ? '__homepages' : getTabGroupKey(tab.url);
       if (host !== hostname) continue;
     }
     const sorted = [...ids].sort((a, b) => a - b);
@@ -47,7 +47,7 @@ export function refreshDuplicates(root, currentTabs) {
     if (ids.length < 2) continue;
     const tab = currentTabs.get(ids[0]);
     if (!tab) continue;
-    const host = isHomepage(tab.url) ? '__homepages' : getHostname(tab.url);
+    const host = isHomepage(tab.url) ? '__homepages' : getTabGroupKey(tab.url);
     if (host) closeCounts.set(host, (closeCounts.get(host) || 0) + ids.length - 1);
   }
   root.querySelectorAll('.domainCard').forEach((card) => {

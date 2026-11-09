@@ -1,6 +1,7 @@
 import { run } from './testUtil.js';
 import './formatDuration.test.js';
 import './hostname.test.js';
+import './domain.test.js';
 import './groupingView.test.js';
 
 const resultsEl = document.getElementById('results');

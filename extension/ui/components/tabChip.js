@@ -22,6 +22,8 @@ import { h } from '../utils/dom.js';
 import { icon } from '../utils/icons.js';
 import { formatDurationCompact } from '../utils/formatDuration.js';
 import { FAVICON_FALLBACK } from '../../shared/constants.js';
+import { isWorkbenchUrl, getTabFavicon } from '../utils/domain.js';
+import { normalizeUrl } from '../../shared/hostname.js';
 
 /**
  * @param {{id:number,url:string,title:string,favIconUrl?:string,windowId:number}} tabInfo
@@ -30,7 +32,7 @@ import { FAVICON_FALLBACK } from '../../shared/constants.js';
 export function create(tabInfo, options = {}) {
   const favicon = h('img', {
     class: 'tabChip__favicon',
-    src: tabInfo.favIconUrl || FAVICON_FALLBACK,
+    src: getTabFavicon(tabInfo) || FAVICON_FALLBACK,
     alt: '',
     onerror: (e) => { e.target.src = FAVICON_FALLBACK; },
   });
@@ -73,7 +75,26 @@ export function create(tabInfo, options = {}) {
     'data-tab-id': String(tabInfo.id),
   }, [favicon, title, badge, dupeBadge, saveBtn, closeBtn]);
 
+  updateInfo(chip, tabInfo);
+  updateSaved(chip, options.isSaved);
   return chip;
+}
+
+/** Apply the same identity and supported actions on creation and URL updates. */
+export function updateInfo(el, tabInfo) {
+  if (!el) return;
+  const title = isWorkbenchUrl(tabInfo.url) ? '栖页' : (tabInfo.title || tabInfo.url || '(untitled)');
+  const titleEl = el.querySelector('.tabChip__title');
+  if (titleEl) {
+    titleEl.textContent = title;
+    titleEl.setAttribute('title', title);
+    titleEl.setAttribute('href', tabInfo.url);
+    titleEl.setAttribute('data-window-id', String(tabInfo.windowId));
+  }
+  const favicon = el.querySelector('.tabChip__favicon');
+  if (favicon) favicon.setAttribute('src', getTabFavicon(tabInfo) || FAVICON_FALLBACK);
+  const save = el.querySelector('.tabChip__save');
+  if (save) save.hidden = !normalizeUrl(tabInfo.url);
 }
 
 /**
@@ -110,7 +131,7 @@ export function updateSaved(el, isSaved) {
   const button = el.querySelector('.tabChip__save');
   if (!button) return;
   button.classList.toggle('is-saved', !!isSaved);
-  button.disabled = !!isSaved;
+  button.disabled = button.hidden || !!isSaved;
   button.setAttribute('aria-pressed', String(!!isSaved));
   button.setAttribute('aria-label', isSaved ? '已加入稍后查看' : '稍后查看');
   button.title = isSaved ? '已加入稍后查看' : '稍后查看';
