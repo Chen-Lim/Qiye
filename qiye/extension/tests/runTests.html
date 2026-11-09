@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>栖页 — Test Runner</title>
+  <style>
+    body { font-family: -apple-system, sans-serif; padding: 24px; background: #fafaf7; }
+    h1 { margin: 0 0 16px; }
+    #results { white-space: pre-wrap; font-family: Menlo, monospace; font-size: 13px; line-height: 1.6; }
+    .pass { color: #2a7a2a; }
+    .fail { color: #c42a2a; }
+    .info { color: #6b6b6b; }
+  </style>
+</head>
+<body>
+  <h1>栖页 — Test Runner</h1>
+  <p class="info">
+    此页面只运行不接触 Chrome 数据的纯函数测试。<br />
+    完整的 storage / tabs / Service Worker mock 测试请在项目根目录运行：<br />
+    <code>node extension/tests/nodeRunner.mjs</code>
+  </p>
+  <div id="results" class="info">Loading tests…</div>
+
+  <script type="module" src="browserRunner.js"></script>
+</body>
+</html>
