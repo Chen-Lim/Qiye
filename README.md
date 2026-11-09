@@ -2,7 +2,7 @@
   <img src="docs/assets/logo.png" width="88" height="88" alt="栖页 · 栖息小鸟" />
 </p>
 
-<h1 align="center">栖页 · qiye</h1>
+<h1 align="center">栖页 · TabNest</h1>
 
 <p align="center">给打开的网页一个去处，也给注意力留一点空间。</p>
 
