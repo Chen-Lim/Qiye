@@ -1,0 +1,14 @@
+.DS_Store
+node_modules/
+package-lock.json
+dist/
+*.zip
+*.log
+*.db
+.env
+.env.*
+!.env.example
+extension/config.local.js
+.workbuddy/
+.screenshots/
+__pycache__/
