@@ -6,11 +6,11 @@
 
 <p align="center">给打开的网页一个去处，也给注意力留一点空间。</p>
 
-栖页是一个 Chrome 新标签页扩展，帮你整理散落的标签页，把想读的网页保存下来，并在阅读后标记为「已查看」。暖白与淡粉色界面，搭配「栖息小鸟」图标。
+栖页是一个 Chrome / Edge 新标签页扩展，帮你整理散落的标签页，把想读的网页保存下来，并在阅读后标记为「已查看」。暖白与淡粉色界面，搭配「栖息小鸟」图标。
 
-**Chrome Manifest V3 · 本地存储 · 无需注册 · MIT 许可**
+**Chromium Manifest V3 · Chrome / Edge 通用 · 本地存储 · 无需注册 · MIT 许可**
 
-[下载插件](https://github.com/Maxine0917/Qiye/releases/latest/download/TabNest-Chrome.zip) · [让 Agent 帮你安装](#让-agent-帮你安装) · [安装步骤](#从插件包安装) · [版本说明](https://github.com/Maxine0917/Qiye/releases/latest)
+[下载插件（Chrome / Edge 通用）](https://github.com/Maxine0917/Qiye/releases/latest/download/TabNest-Chrome.zip) · [让 Agent 帮你安装](#让-agent-帮你安装) · [安装步骤](#从插件包安装) · [版本说明](https://github.com/Maxine0917/Qiye/releases/latest)
 
 ![栖页操作演示：点击书签保存网页，勾选移入已查看，再展开查看记录](docs/assets/save-and-viewed.gif)
 
@@ -52,32 +52,34 @@
 复制下面这句话，发给能联网并操作你电脑文件的 Agent：
 
 ```text
-请帮我把 https://github.com/Maxine0917/Qiye 的栖页插件安装到本机 Chrome：先阅读仓库 README 和 docs/INSTALL.md，下载该仓库默认分支的源码 ZIP，解压到长期保留的目录并保留根目录 LICENSE（若已有安装，先确认原安装路径再处理），核对 extension/manifest.json，给出 extension 文件夹的绝对路径，再引导我在 chrome://extensions 开启开发者模式、点击“加载已解压的扩展程序”并选择该文件夹，最后新建标签页确认栖页正常显示。
+请帮我把 https://github.com/Maxine0917/Qiye 的栖页插件安装到本机 Chrome 或 Edge（以我使用的浏览器为准）：先阅读仓库 README 和 docs/INSTALL.md，下载该仓库默认分支的源码 ZIP，解压到长期保留的目录并保留根目录 LICENSE（若已有安装，先确认原安装路径再处理），核对 extension/manifest.json，给出 extension 文件夹的绝对路径；Chrome 引导我打开 chrome://extensions，Edge 引导我打开 edge://extensions，开启开发者模式后点击“加载已解压的扩展程序”并选择该文件夹，最后新建标签页确认栖页正常显示。
 ```
 
-Agent 会帮你准备安装文件；Chrome 中的加载操作仍需你确认。无需安装 Node.js、Python 或运行打包脚本。安装目录请保留，后续更新沿用同一路径。
+Agent 会帮你准备安装文件；浏览器中的加载操作仍需你确认。无需安装 Node.js、Python 或运行打包脚本。安装目录请保留，后续更新沿用同一路径。
 
 ### 从源码安装
 
 1. 在本仓库点击 **Code → Download ZIP**，下载后解压。
-2. 在 Chrome 地址栏输入 `chrome://extensions`，打开右上角的**开发者模式**。
-3. 点击**加载已解压的扩展程序**，选择解压后的 **`extension` 文件夹**。
-4. 新建一个标签页，进入栖页。
+2. 打开扩展管理页：Chrome 输入 `chrome://extensions`，Edge 输入 `edge://extensions`。
+3. 打开**开发者模式**（Edge 显示为「开发人员模式」）。
+4. 点击**加载已解压的扩展程序**（Edge 为「加载解压缩的扩展」），选择解压后的 **`extension` 文件夹**。
+5. 新建一个标签页，进入栖页。
 
-请选择包含 `manifest.json` 的目录。扩展运行不需要 Node.js、Python 或服务器。
+请选择包含 `manifest.json` 的目录。扩展运行不需要 Node.js、Python 或服务器。Chrome 与 Edge 使用同一份 `extension` 目录，无需分别打包。
 
 ### 从插件包安装
 
-1. [下载最新版 TabNest-Chrome.zip](https://github.com/Maxine0917/Qiye/releases/latest/download/TabNest-Chrome.zip)，解压到长期保留的目录。
-2. 在 Chrome 地址栏输入 `chrome://extensions`，打开右上角的**开发者模式**。
-3. 点击**加载已解压的扩展程序**，选择解压后含 `manifest.json` 的目录。
-4. 新建一个标签页，进入栖页。
+1. [下载最新版 TabNest-Chrome.zip](https://github.com/Maxine0917/Qiye/releases/latest/download/TabNest-Chrome.zip)（Chrome / Edge 通用），解压到长期保留的目录。
+2. 打开扩展管理页：Chrome 输入 `chrome://extensions`，Edge 输入 `edge://extensions`。
+3. 打开**开发者模式**（Edge 显示为「开发人员模式」）。
+4. 点击**加载已解压的扩展程序**（Edge 为「加载解压缩的扩展」），选择解压后含 `manifest.json` 的目录。
+5. 新建一个标签页，进入栖页。
 
-Chrome 的「加载已解压的扩展程序」不能直接选择 ZIP 文件。通过本地脚本或 Actions 获得的 `栖页-插件.zip` 使用相同的安装方式。下载源码请前往 [Releases](https://github.com/Maxine0917/Qiye/releases/latest)，选择 `TabNest-Source.zip`。
+Chrome 和 Edge 的加载入口都不能直接选择 ZIP 文件。通过本地脚本或 Actions 获得的 `栖页-插件.zip` 使用相同的安装方式，两个浏览器均可加载。下载源码请前往 [Releases](https://github.com/Maxine0917/Qiye/releases/latest)，选择 `TabNest-Source.zip`。
 
 ### 更新已有安装
 
-更新同一加载目录中的文件，再在 `chrome://extensions` 点击扩展卡片上的 **↻ 重新加载**，最后新建标签页。只刷新网页不会更新 Chrome 记录的扩展名称和图标。
+更新同一加载目录中的文件，再在 Chrome 的 `chrome://extensions` 或 Edge 的 `edge://extensions` 点击扩展卡片上的 **↻ 重新加载**，最后新建标签页。只刷新网页不会更新浏览器记录的扩展名称和图标。
 
 加载路径影响本地扩展身份，换目录后数据不会自动迁移。更多情况见[安装与更新](docs/INSTALL.md)。
 
@@ -97,7 +99,7 @@ Chrome 的「加载已解压的扩展程序」不能直接选择 ZIP 文件。�
 
 ## 隐私与数据
 
-浏览记录、保存网页和设置存储在本机的 `chrome.storage.local` 中。扩展没有账号系统，不向分析或遥测服务上传这些记录。
+浏览记录、保存网页和设置存储在本机的 `chrome.storage.local` 中（Chrome / Edge 共用同一套扩展存储 API）。扩展没有账号系统，不向分析或遥测服务上传这些记录。
 
 网页图标可能从原网站加载，点击链接也会访问对应网站；这些请求受网站自身的隐私政策约束。完整权限用途见[隐私说明](PRIVACY.md)。
 
@@ -126,14 +128,19 @@ dist/
 └── qiye-源码.zip   # 源码、测试、文档与 GitHub Actions
 ```
 
-浏览器验收需要另行安装 Playwright，并安装可用的 Chrome：
+浏览器验收需要另行安装 Playwright，并安装可用的 Chrome 或 Edge：
 
 ```bash
 npm install --no-save --package-lock=false playwright
+
+# Chrome
 node extension/tests/browser-ui.mjs
+
+# Edge
+QIYE_BROWSER_CHANNEL=msedge node extension/tests/browser-ui.mjs
 ```
 
-验收使用独立临时浏览器配置，覆盖保存、已查看、刷新保留、多页面同步、主题和窄屏布局。若 Playwright 位于其他位置，可用 `PLAYWRIGHT_MODULE` 指定模块入口；截图默认保存到系统临时目录，可用 `QIYE_SCREENSHOT_DIR` 调整。
+验收使用独立临时浏览器配置，覆盖保存、已查看、刷新保留、多页面同步、主题和窄屏布局。默认使用 Chrome；设置 `QIYE_BROWSER_CHANNEL=msedge` 可改用本机 Microsoft Edge 验证。若 Playwright 位于其他位置，可用 `PLAYWRIGHT_MODULE` 指定模块入口；截图默认保存到系统临时目录，可用 `QIYE_SCREENSHOT_DIR` 调整。
 
 GitHub Actions 会执行回归测试、后台启动检查和打包，通过后可在该次运行的 Artifacts 中下载 `qiye-packages`。
 
@@ -141,7 +148,7 @@ GitHub Actions 会执行回归测试、后台启动检查和打包，通过后�
 
 ```text
 qiye/
-├── extension/         # Chrome 加载此目录
+├── extension/         # Chrome / Edge 加载此目录
 │   ├── background/    # 存储、计时、专注与同步
 │   ├── shared/        # 常量、类型与消息协议
 │   ├── ui/            # 界面与交互

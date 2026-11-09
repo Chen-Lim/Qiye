@@ -35,7 +35,18 @@ python3 scripts/package.py
 
 只维护根目录的 `LICENSE`。打包脚本会自动将它原样加入插件包根目录，源码包也保留这一份文件；无需在 `extension/` 下另存副本。
 
-可以在 GitHub Releases 创建与插件版本一致的发布版本，把 `栖页-插件.zip` 附在其中。源码、下载包和 Chrome Web Store 发布是不同的交付方式；上传 GitHub 不会自动上架扩展商店。
+可以在 GitHub Releases 创建与插件版本一致的发布版本，把 `栖页-插件.zip` 附在其中。源码、下载包和 Chrome Web Store / Microsoft Edge Add-ons 发布是不同的交付方式；上传 GitHub 不会自动上架扩展商店。
+
+## 上架 Edge Add-ons
+
+Edge 使用 Chromium Manifest V3，可以直接复用 `dist/栖页-插件.zip`，不需要修改清单或单独打包。
+
+1. 在 [Microsoft Partner Center](https://partner.microsoft.com/dashboard/microsoftedge/) 注册并创建扩展条目。
+2. 上传 `dist/栖页-插件.zip`，确认清单版本为 3、扩展名称为「栖页」。
+3. 填写商店说明、截图、隐私说明和支持链接；隐私说明可直接参考 `PRIVACY.md`。
+4. 提交审核。Edge 与 Chrome 的审核相互独立，通过其中一个商店不会自动上架另一个。
+
+本地验收 Edge 时，在 `edge://extensions` 开启「开发人员模式」，点击「加载解压缩的扩展」并选择 `extension/` 目录。
 
 ## 发布前核对
 
@@ -43,5 +54,7 @@ python3 scripts/package.py
 - README 中的图片和文档链接可在仓库内打开。
 - 根目录的 `LICENSE` 通过校验，插件包中的 `LICENSE` 与其内容一致。
 - 回归测试与后台启动检查通过。
+- 在 Chrome 和 Edge 中分别加载 `extension/`，确认新标签页、保存与已查看流程正常。
+- 设置 `QIYE_BROWSER_CHANNEL=msedge` 的浏览器验收通过（本机安装 Edge 时）。
 - 用独立浏览器确认新标签页、保存与已查看流程。
 - 下载包可以解压，加载目录内包含 `manifest.json`。

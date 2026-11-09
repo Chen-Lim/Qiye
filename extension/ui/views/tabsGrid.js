@@ -48,7 +48,7 @@ export function render(root, tabs, options = {}) {
 
   if (groups.length === 0 && homepages.length === 0) {
     rootEl.appendChild(h('p', { class: 'tabsGrid__empty' }, [
-      '暂无可分组的标签页。（chrome:// 和扩展页不显示）',
+      '暂无可分组的标签页。（chrome://、edge:// 等浏览器内部页和扩展页不显示）',
     ]));
   }
 
@@ -253,7 +253,7 @@ function bucketKeyFor(tabInfo) {
 
 function insertChipForTab(tabInfo) {
   const key = bucketKeyFor(tabInfo);
-  if (key === '__invalid') return;  // chrome:// 等
+  if (key === '__invalid') return;  // chrome://、edge:// 等
 
   // 找到/创建对应的 card（属性选择器值用双引号，只需转义 " 和 \）
   let card = rootEl.querySelector(`.domainCard[data-hostname="${attrEscape(key)}"]`);

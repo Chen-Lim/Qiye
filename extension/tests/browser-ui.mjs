@@ -1,5 +1,6 @@
 /**
- * Isolated Chrome acceptance test.
+ * Isolated Chrome / Edge acceptance test.
+ * QIYE_BROWSER_CHANNEL=msedge node extension/tests/browser-ui.mjs
  * PLAYWRIGHT_MODULE=/absolute/path/to/playwright/index.mjs node extension/tests/browser-ui.mjs
  * Never uses an existing browser profile. Sample sites are served by request interception.
  */
@@ -12,12 +13,14 @@ import path from 'node:path';
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const source = fileURLToPath(new URL('../', import.meta.url));
 const output = process.env.QIYE_SCREENSHOT_DIR || path.join(tmpdir(), 'qiye-browser-check');
+const channel = process.env.QIYE_BROWSER_CHANNEL || 'chrome';
+const newTabUrl = channel === 'msedge' ? 'edge://newtab/' : 'chrome://newtab/';
 await mkdir(output, { recursive: true });
 const errors = [];
 let page;
 const iconSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><rect width="24" height="24" rx="5" fill="#875465"/><path d="M6 7h12v10H6zm2 3h8m-8 3h5" fill="none" stroke="#fff" stroke-width="1.5"/></svg>';
 const context = await chromium.launchPersistentContext('', {
-  channel: 'chrome',
+  channel,
   headless: true,
   viewport: { width: 1440, height: 1000 },
   ignoreDefaultArgs: ['--disable-extensions'],
@@ -160,7 +163,7 @@ try {
   assert.equal(await page.locator('.openTabs').evaluate((el) => el.clientWidth), widthWithoutSaved);
   const newTab = await context.newPage();
   newTab.on('pageerror', (error) => errors.push(error.message));
-  await newTab.goto('chrome://newtab/');
+  await newTab.goto(newTabUrl);
   await newTab.locator('.brand').waitFor();
   assert.equal(await newTab.locator('.brand').textContent(), '栖页');
   assert.equal(await newTab.evaluate(() => chrome.runtime.getManifest().name), '栖页');
@@ -168,7 +171,7 @@ try {
   assert.deepEqual(errors, [], 'no page errors during acceptance');
   assert.match(await readFile(`${source}/../LICENSE`, 'utf8'), /^MIT License/);
   console.log(JSON.stringify({
-    passed: true, manifest: { name: manifest.name, version: manifest.version },
+    passed: true, channel, manifest: { name: manifest.name, version: manifest.version },
     sampleTabs: 12, checks: ['empty/first-save', 'original favicon', 'viewed/restore', 'refresh persistence', 'multi-page sync', 'search/sort preservation', 'settings removed', 'dark/mobile', 'last-delete', 'root license present'],
     screenshots: ['未保存', '首次保存', '保存与已查看', '精简设置', '深色', '手机布局'].map((state) => `${output}/栖页-${state}.png`),
     pageErrors: errors,

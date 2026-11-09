@@ -6,7 +6,7 @@
  * 职责：
  *   - getHostname(url)  提取 hostname（含 localhost:port 保留端口）
  *   - isHomepage(url)   是否属于 HOMEPAGE_HOSTS 且是根/首页路径
- *   - groupByDomain(tabs) 按 hostname 分组，过滤 chrome:// / about: / 扩展页
+ *   - groupByDomain(tabs) 按 hostname 分组，过滤 chrome:// / edge:// / about: / 扩展页
  *
  * 里程碑：M2。
  */
@@ -40,7 +40,7 @@ export function isHomepage(url) {
 /**
  * 把 tab 数组按 hostname 分组。
  *   - Homepages 进独立的 "__homepages" 桶
- *   - 非 http/https 的 tab 被过滤（chrome://newtab、扩展页等）
+ *   - 非 http/https 的 tab 被过滤（chrome://newtab、edge://newtab、扩展页等）
  *
  * 返回结构：
  *   {
@@ -58,7 +58,7 @@ export function groupByDomain(tabs) {
   for (const t of tabs || []) {
     if (!t || !t.url) continue;
     const host = getHostname(t.url);
-    if (!host) continue;  // 过滤 chrome:// 等
+    if (!host) continue;  // 过滤 chrome://、edge:// 等
     if (isHomepage(t.url)) {
       homepages.push(t);
       continue;

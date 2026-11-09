@@ -74,6 +74,7 @@ suite('FocusGuard — host rules', () => {
 
   test('browser and extension pages are always internal', () => {
     assert.equal(isInternalUrl('chrome://settings/'), true, 'chrome page allowed');
+    assert.equal(isInternalUrl('edge://settings/'), true, 'edge page allowed');
     assert.equal(isInternalUrl('chrome-extension://id/blocked.html'), true, 'extension page allowed');
     assert.equal(isInternalUrl('https://example.com'), false, 'web page is not internal');
   });
