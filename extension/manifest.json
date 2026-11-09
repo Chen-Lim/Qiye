@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "栖页",
   "short_name": "栖页",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "按网站整理标签页，保存稍后查看的网页，记录浏览时长，专注于当前任务。",
   "permissions": ["tabs", "storage", "alarms", "idle", "notifications"],
   "chrome_url_overrides": { "newtab": "index.html" },

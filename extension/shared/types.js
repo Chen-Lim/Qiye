@@ -65,4 +65,4 @@
  * @property {Object} config
  */
 
-export {};  // 标记为 module，便于 bundler / Chrome 识别
+export {};  // 标记为 module，便于 bundler / 浏览器识别

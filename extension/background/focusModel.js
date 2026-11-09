@@ -4,7 +4,7 @@
  * 封装 chrome.windows.onFocusChanged，作为"当前该给谁计时"的**单一真相源**。
  *
  * 职责：
- *   - 维护 focusedWindowId（内存）；WINDOW_ID_NONE → null（Chrome 失焦）
+ *   - 维护 focusedWindowId（内存）；WINDOW_ID_NONE → null（浏览器失焦）
  *   - 状态变化时通知 timeTracker.onFocusWindow
  *   - 启动时从 chrome.windows.getLastFocused() 恢复状态
  *
@@ -43,7 +43,7 @@ export async function init() {
         timeTracker.onActivateTab(activeTab.id, win.id);
       }
     } else {
-      // Chrome 不在焦点
+      // 浏览器不在焦点
       onFocusChanged(null);
     }
   } catch (err) {

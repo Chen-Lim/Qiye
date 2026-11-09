@@ -6,9 +6,9 @@
 
 <p align="center">找回打开的网页，收好稍后想读的内容，回看时间花在哪里。</p>
 
-栖页是一个 Chrome 新标签页扩展。点击浏览器的「＋」，把已打开标签、稍后阅读和浏览统计放在同一个工作台上。
+栖页是一个 Chrome / Edge 新标签页扩展。点击浏览器的「＋」，把已打开标签、稍后阅读和浏览统计放在同一个工作台上。
 
-Chrome Manifest V3 · 本地存储 · 无需注册
+Chromium Manifest V3 · Chrome / Edge 通用 · 本地存储 · 无需注册
 
 **[下载插件 ZIP](https://github.com/Maxine0917/Qiye/releases/latest/download/TabNest-Chrome.zip)** · [四步安装](#从插件包安装) · [让 Agent 帮你安装](#让-agent-帮你安装)
 
@@ -19,8 +19,8 @@ Chrome Manifest V3 · 本地存储 · 无需注册
 ### 从插件包安装
 
 1. [下载 TabNest-Chrome.zip](https://github.com/Maxine0917/Qiye/releases/latest/download/TabNest-Chrome.zip)，解压到长期保留的目录。
-2. 在 Chrome 地址栏输入 `chrome://extensions`，打开右上角的**开发者模式**。
-3. 点击**加载未打包的扩展程序**，选择解压后直接包含 `manifest.json` 的文件夹。
+2. Chrome 输入 `chrome://extensions`，开启**开发者模式**；Edge 输入 `edge://extensions`，开启**开发人员模式**。
+3. Chrome 点击**加载未打包的扩展程序**，Edge 点击**加载解压缩的扩展**，选择解压后直接包含 `manifest.json` 的文件夹。
 4. 点击浏览器的「＋」，进入栖页；若提示新标签页被更改，选择**保持现状**。
 
 部分 Chrome 版本将第 3 步按钮称为「加载已解压的扩展程序」。选择文件夹即可，不能直接选择 ZIP 或 `manifest.json` 文件。插件包内无需再寻找 `extension/`，安装目录请保留。**使用插件不需要 Node.js、Python 或服务器。**
@@ -39,10 +39,10 @@ Chrome Manifest V3 · 本地存储 · 无需注册
 复制下面的指令，发给能联网并操作本机文件的 Agent：
 
 ```text
-请帮我把 https://github.com/Maxine0917/Qiye 的栖页（TabNest）插件安装到本机 Chrome：先阅读仓库 README 和 docs/INSTALL.md，再从 https://github.com/Maxine0917/Qiye/releases/latest/download/TabNest-Chrome.zip 下载最新版插件包，解压到长期保留的目录并保留包内 LICENSE（若已有安装，先确认原安装路径再处理），找到并核对 manifest.json，给出它所在文件夹的绝对路径，再引导我在 chrome://extensions 开启开发者模式、点击“加载未打包的扩展程序”（部分版本叫“加载已解压的扩展程序”）并选择该文件夹，最后点击浏览器的“＋”确认栖页正常显示。
+请帮我把 https://github.com/Maxine0917/Qiye 的栖页（TabNest）插件安装到本机 Chrome 或 Edge（以我使用的浏览器为准）：先阅读仓库 README 和 docs/INSTALL.md，再从 https://github.com/Maxine0917/Qiye/releases/latest/download/TabNest-Chrome.zip 下载最新版插件包，解压到长期保留的目录并保留包内 LICENSE（若已有安装，先确认原安装路径再处理），找到并核对 manifest.json，给出它所在文件夹的绝对路径；Chrome 引导我打开 chrome://extensions、开启开发者模式、点击“加载未打包的扩展程序”（部分版本叫“加载已解压的扩展程序”），Edge 引导我打开 edge://extensions、开启开发人员模式、点击“加载解压缩的扩展”，选择该文件夹，最后点击浏览器的“＋”确认栖页正常显示。
 ```
 
-Agent 帮你准备安装文件，Chrome 中的加载操作仍需你确认。后续更新沿用同一路径。
+Agent 帮你准备安装文件，浏览器中的加载操作仍需你确认。后续更新沿用同一路径。
 
 <details>
 <summary>从源码安装与更新已有安装</summary>
@@ -122,13 +122,13 @@ Agent 帮你准备安装文件，Chrome 中的加载操作仍需你确认。后�
 
 ## 问题反馈与功能建议
 
-遇到异常，请[提交问题反馈](https://github.com/Maxine0917/Qiye/issues/new?title=问题反馈：)，说明 Chrome 版本、插件版本、复现步骤，以及预期和实际表现；截图请遮挡个人信息。
+遇到异常，请[提交问题反馈](https://github.com/Maxine0917/Qiye/issues/new?title=问题反馈：)，说明浏览器及版本、插件版本、复现步骤，以及预期和实际表现；截图请遮挡个人信息。
 
 如果有希望改进的使用场景，欢迎[提出功能建议](https://github.com/Maxine0917/Qiye/issues/new?title=功能建议：)，描述你遇到的困扰、目前的处理方式，以及希望达到的效果。
 
 ## 隐私与数据
 
-浏览记录、保存网页和设置存储在本机的 `chrome.storage.local` 中。扩展没有账号系统，不向分析或遥测服务上传这些记录。
+浏览记录、保存网页和设置存储在本机的 `chrome.storage.local` 中。Chrome / Edge 使用相同的存储 API，但各自维护独立的数据，切换浏览器不会自动同步。扩展没有账号系统，不向分析或遥测服务上传这些记录。
 
 网页图标可能从原网站加载，点击链接也会访问对应网站；这些请求受网站自身的隐私政策约束。完整权限用途见[隐私说明](PRIVACY.md)。
 
@@ -160,23 +160,28 @@ dist/
 └── qiye-源码.zip   # 源码、测试、文档与 GitHub Actions
 ```
 
-浏览器验收需要另行安装 Playwright，并安装可用的 Chrome：
+浏览器验收需要另行安装 Playwright，并安装可用的 Chrome 或 Edge：
 
 ```bash
 npm install --no-save --package-lock=false playwright@1.65.0
-npx playwright install chrome
+npx playwright install chrome msedge
+
+# Chrome
 node extension/tests/browser-ui.mjs
+
+# Edge
+QIYE_BROWSER_CHANNEL=msedge node extension/tests/browser-ui.mjs
 ```
 
-验收使用独立临时浏览器配置，覆盖新标签页、保存、已查看、刷新保留、多页面同步、主题和窄屏布局，不使用日常 Chrome 配置。若 Playwright 位于其他位置，可用 `PLAYWRIGHT_MODULE` 指定模块入口；截图和 `result.json` 默认保存到系统临时目录，可用 `QIYE_SCREENSHOT_DIR` 调整。Linux 环境可用 `npx playwright install --with-deps chrome` 一并安装所需系统依赖。
+验收使用独立临时浏览器配置，覆盖新标签页计数、关闭重复、保存、已查看、刷新保留、多页面同步、主题和窄屏布局，不使用日常浏览器配置。默认使用 Chrome；设置 `QIYE_BROWSER_CHANNEL=msedge` 可改用 Microsoft Edge。若 Playwright 位于其他位置，可用 `PLAYWRIGHT_MODULE` 指定模块入口；临时解压的浏览器可通过 `QIYE_BROWSER_EXECUTABLE` 指定可执行文件。截图和 `result.json` 默认保存到系统临时目录，可用 `QIYE_SCREENSHOT_DIR` 调整。Linux 环境可用 `npx playwright install --with-deps chrome msedge` 一并安装所需系统依赖。
 
-每次 push 和 pull request，GitHub Actions 都会执行回归测试、后台启动检查、真实 Chrome 浏览器验收和打包。通过后可在该次运行的 Artifacts 中下载 `qiye-packages`；`qiye-browser-check` 保存验收截图与结果，保留 14 天。浏览器操作失败时会尽可能额外保存 `failure.png` 和诊断结果，方便定位问题。
+每次 push 和 pull request，GitHub Actions 都会执行回归测试、后台启动检查、真实 Chrome / Edge 浏览器验收和打包。通过后可在该次运行的 Artifacts 中下载 `qiye-packages`；`qiye-browser-check` 保存验收截图与结果，保留 14 天。浏览器操作失败时会尽可能额外保存 `failure.png` 和诊断结果，方便定位问题。
 
 ### 项目结构
 
 ```text
 qiye/
-├── extension/         # Chrome 加载此目录
+├── extension/         # Chrome / Edge 加载此目录
 │   ├── background/    # 存储、计时、专注与同步
 │   ├── shared/        # 常量、类型与消息协议
 │   ├── ui/            # 界面与交互

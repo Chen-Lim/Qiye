@@ -2,7 +2,7 @@
  * ui/messaging.js
  * ----------------
  * UI 端与 SW 通信封装：REQ_* 走 sendMessage，BCAST_* 走 runtime Port。
- * Port 断线自动重连，页面关闭时由 Chrome 自动触发 onDisconnect。
+ * Port 断线自动重连，页面关闭时由浏览器自动触发 onDisconnect。
  * 契约：docs/ARCHITECTURE.md §1、§5。
  * 请求式 API 返回 Promise<data>；订阅式 API 返回 unsubscribe。
  */

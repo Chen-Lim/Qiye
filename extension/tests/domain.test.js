@@ -23,13 +23,24 @@ suite('Workbench tab visibility', () => {
     for (const url of [
       'chrome-extension://other/index.html',
       'chrome-extension://qiye-test/blocked.html',
-      'chrome://newtab/other', 'chrome://settings/', 'about:blank', 'invalid',
+      'chrome://newtab/other', 'chrome://settings/', 'edge://settings/', 'about:blank', 'invalid',
     ]) assert.equal(isWorkbenchUrl(url, ownUrl), false, url);
     assert.equal(isWorkbenchUrl(ownUrl, ''), false);
   });
 
+  test('Edge new tabs share the workbench group and duplicate cleanup', () => withOwnRuntime(() => {
+    const tabs = new Map([
+      [1, { id: 1, url: ownUrl }], [2, { id: 2, url: 'edge://newtab/' }],
+      [3, { id: 3, url: 'edge://settings/' }],
+    ]);
+    assert.equal(getTabGroupKey('edge://newtab/'), WORKBENCH_GROUP);
+    assert.equal(getTabGroupKey('edge://settings/'), '');
+    assert.deepEqual(groupByDomain([...tabs.values()]).groups[0].tabs.map(tab => tab.id), [1, 2]);
+    assert.deepEqual(getDuplicateTabIds(tabs, WORKBENCH_GROUP), [2]);
+  }));
+
   test('keeps own pages out of shared website timing and saved URL normalization', () => {
-    for (const url of [ownUrl, 'chrome://newtab/']) {
+    for (const url of [ownUrl, 'chrome://newtab/', 'edge://newtab/']) {
       assert.equal(getHostname(url), '');
       assert.equal(normalizeUrl(url), '');
     }

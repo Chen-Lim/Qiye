@@ -20,13 +20,13 @@ export { getHostname };
 export const WORKBENCH_GROUP = '__qiye';
 
 /**
- * Chrome 新标签页和当前扩展的主页面都属于栖页。
+ * Chrome / Edge 新标签页和当前扩展的主页面都属于栖页。
  * 只在 UI 放开这两种地址，共享的计时和网页保存规则保持独立。
  */
 export function isWorkbenchUrl(url, workbenchUrl = globalThis.chrome?.runtime?.getURL?.('index.html')) {
   let parsed;
   try { parsed = new URL(url); } catch { return false; }
-  if (parsed.protocol === 'chrome:' && parsed.hostname === 'newtab') {
+  if (['chrome:', 'edge:'].includes(parsed.protocol) && parsed.hostname === 'newtab') {
     return parsed.pathname === '/' || parsed.pathname === '';
   }
   if (parsed.protocol !== 'chrome-extension:' || !workbenchUrl) return false;
@@ -74,7 +74,7 @@ export function isHomepage(url) {
 /**
  * 把 tab 数组按 hostname 分组。
  *   - Homepages 进独立的 "__homepages" 桶
- *   - 栖页主页面和 Chrome 新标签页进入 "__qiye" 桶，其他浏览器内部页仍过滤
+ *   - 栖页主页面和 Chrome / Edge 新标签页进入 "__qiye" 桶，其他浏览器内部页仍过滤
  *
  * 返回结构：
  *   {

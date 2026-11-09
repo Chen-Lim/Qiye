@@ -10,6 +10,7 @@ suite('Hostname normalization', () => {
 
   test('rejects unsupported schemes and invalid input', () => {
     assert.equal(normalizeHostnameInput('chrome://settings'), '');
+    assert.equal(normalizeHostnameInput('edge://settings'), '');
     assert.equal(normalizeHostnameInput('javascript:alert(1)'), '');
     assert.equal(normalizeHostnameInput('bad host.com'), '');
   });

@@ -26,10 +26,15 @@ jobs:
       - name: Install browser acceptance dependencies
         run: |
           npm install --no-save --package-lock=false playwright@1.65.0
-          npx playwright install --with-deps chrome
+          npx playwright install --with-deps chrome msedge
       - name: Run Chrome browser acceptance
         env:
-          QIYE_SCREENSHOT_DIR: ${{ runner.temp }}/qiye-browser-check
+          QIYE_SCREENSHOT_DIR: ${{ runner.temp }}/qiye-browser-check/chrome
+        run: node extension/tests/browser-ui.mjs
+      - name: Run Edge browser acceptance
+        env:
+          QIYE_BROWSER_CHANNEL: msedge
+          QIYE_SCREENSHOT_DIR: ${{ runner.temp }}/qiye-browser-check/edge
         run: node extension/tests/browser-ui.mjs
       - name: Upload browser acceptance evidence
         if: always()

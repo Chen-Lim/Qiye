@@ -252,7 +252,7 @@ function bucketKeyFor(tabInfo) {
 
 function insertChipForTab(tabInfo) {
   const key = bucketKeyFor(tabInfo);
-  if (key === '__invalid') return;  // chrome:// 等
+  if (key === '__invalid') return;  // chrome://、edge:// 等
 
   // 找到/创建对应的 card（属性选择器值用双引号，只需转义 " 和 \）
   let card = rootEl.querySelector(`.domainCard[data-hostname="${attrEscape(key)}"]`);

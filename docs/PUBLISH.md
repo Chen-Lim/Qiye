@@ -48,16 +48,27 @@ python3 scripts/package.py
 
 在 GitHub Releases 创建与 `extension/manifest.json` 的版本号一致的标签（例如插件版本 `2.0.2` 对应 `v2.0.2`），上传以上两份附件。README 的 `/releases/latest/download/TabNest-Chrome.zip` 和 `TabNest-Source.zip` 依赖这两个固定名称，每次发布应保持一致。
 
-GitHub Actions 对每次 push 和 pull request 执行回归测试、后台启动检查、Chrome 浏览器验收与打包；通过后可下载 `qiye-packages`。`qiye-browser-check` 保留截图及 `result.json`，失败时尽可能附带失败截图，保留 14 天。
+GitHub Actions 对每次 push 和 pull request 执行回归测试、后台启动检查、Chrome / Edge 浏览器验收与打包；通过后可下载 `qiye-packages`。`qiye-browser-check` 分别保留两个浏览器的截图及 `result.json`，失败时尽可能附带失败截图，保留 14 天。
 
-目前 Release 仍需手动发布，Actions 不会自动创建版本或上传 Release 附件。源码、下载包和 Chrome Web Store 发布是不同的交付方式；上传 GitHub 不会自动上架扩展商店。
+目前 Release 仍需手动发布，Actions 不会自动创建版本或上传 Release 附件。源码、下载包和 Chrome Web Store / Microsoft Edge Add-ons 发布是不同的交付方式；上传 GitHub 不会自动上架扩展商店。
+
+## 上架 Edge Add-ons
+
+Edge 使用 Chromium Manifest V3，可以直接复用 `dist/栖页-插件.zip`，不需要修改清单或单独打包。
+
+1. 在 [Microsoft Partner Center](https://partner.microsoft.com/dashboard/microsoftedge/) 注册并创建扩展条目。
+2. 上传 `dist/栖页-插件.zip`，确认清单版本为 3、扩展名称为「栖页」。
+3. 填写商店说明、截图、隐私说明和支持链接；隐私说明可直接参考 `PRIVACY.md`。
+4. 提交审核。Edge 与 Chrome 的审核相互独立，通过其中一个商店不会自动上架另一个。
+
+本地验收 Edge 时，在 `edge://extensions` 开启「开发人员模式」，点击「加载解压缩的扩展」并选择 `extension/` 目录。
 
 ## 发布前核对
 
 - `extension/manifest.json` 中名称和图标路径正确。
 - README 中的图片和文档链接可在仓库内打开。
 - 根目录的 `LICENSE` 通过校验，插件包中的 `LICENSE` 与其内容一致。
-- 回归测试、后台启动检查与 Chrome 浏览器自动验收通过。
+- 回归测试、后台启动检查与 Chrome / Edge 浏览器自动验收通过。
 - 查看 `qiye-browser-check` 结果；新标签页、保存、已查看、刷新保留和多页面同步均正常。
 - 下载包可以解压，加载目录内包含 `manifest.json`。
 - Release 标签与插件版本号一致，附件名为 `TabNest-Chrome.zip` 和 `TabNest-Source.zip`，README 的下载入口可用。

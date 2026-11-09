@@ -1,5 +1,6 @@
 /**
- * Isolated Chrome acceptance test.
+ * Isolated Chrome / Edge acceptance test.
+ * QIYE_BROWSER_CHANNEL=msedge node extension/tests/browser-ui.mjs
  * PLAYWRIGHT_MODULE=/absolute/path/to/playwright/index.mjs node extension/tests/browser-ui.mjs
  * Never uses an existing browser profile. Sample sites are served by request interception.
  */
@@ -12,12 +13,16 @@ import path from 'node:path';
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const source = fileURLToPath(new URL('../', import.meta.url));
 const output = process.env.QIYE_SCREENSHOT_DIR || path.join(tmpdir(), 'qiye-browser-check');
+const channel = process.env.QIYE_BROWSER_CHANNEL || 'chrome';
+const newTabUrl = channel === 'msedge' ? 'edge://newtab/' : 'chrome://newtab/';
+const settingsUrl = channel === 'msedge' ? 'edge://settings/' : 'chrome://settings/';
 await mkdir(output, { recursive: true });
 const errors = [];
 let page;
 const iconSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><rect width="24" height="24" rx="5" fill="#875465"/><path d="M6 7h12v10H6zm2 3h8m-8 3h5" fill="none" stroke="#fff" stroke-width="1.5"/></svg>';
 const context = await chromium.launchPersistentContext('', {
-  channel: 'chrome',
+  channel,
+  executablePath: process.env.QIYE_BROWSER_EXECUTABLE || undefined,
   headless: true,
   viewport: { width: 1440, height: 1000 },
   ignoreDefaultArgs: ['--disable-extensions'],
@@ -177,7 +182,7 @@ try {
   assert.equal(await page.locator('.openTabs').evaluate((el) => el.clientWidth), widthWithoutSaved);
   const newTab = await context.newPage();
   newTab.on('pageerror', (error) => errors.push(error.message));
-  await newTab.goto('chrome://newtab/');
+  await newTab.goto(newTabUrl);
   await newTab.locator('.brand').waitFor();
   assert.equal(await newTab.locator('.brand').textContent(), '栖页');
   assert.equal(await newTab.evaluate(() => chrome.runtime.getManifest().name), '栖页');
@@ -203,7 +208,7 @@ try {
   assert.equal(await page.evaluate(async (tabId) => (await chrome.tabs.query({})).some(tab => tab.id === tabId), newTabId), false);
   const duplicate = await context.newPage();
   duplicate.on('pageerror', (error) => errors.push(error.message));
-  await duplicate.goto('chrome://newtab/');
+  await duplicate.goto(newTabUrl);
   await waitForCount(page, 15);
   await duplicate.locator('.brand').waitFor();
   let duplicatePrompt;
@@ -220,14 +225,14 @@ try {
   // A live tab moves in/out of the group as its URL changes.
   const navigation = await context.newPage();
   navigation.on('pageerror', (error) => errors.push(error.message));
-  await navigation.goto('chrome://newtab/');
+  await navigation.goto(newTabUrl);
   await waitForCount(page, 14);
   await navigation.goto('http://code.qiye.test/navigation/0');
   await waitForCount(page, 14);
   assert.equal(await ownCard(page).locator('.tabChip').count(), 1);
-  await navigation.goto('chrome://settings/');
+  await navigation.goto(settingsUrl);
   await waitForCount(page, 13);
-  await navigation.goto('chrome://newtab/');
+  await navigation.goto(newTabUrl);
   await waitForCount(page, 14);
   await page.reload();
   await waitForCount(page, 14);
@@ -236,12 +241,12 @@ try {
   await page.evaluate(() => chrome.runtime.sendMessage({ type: 'REQ_SET_THEME', theme: 'light' }));
   await page.waitForFunction(() => document.documentElement.dataset.theme === 'light');
   await page.screenshot({ path: `${output}/栖页-自身标签页.png`, fullPage: true });
-  const ownTabsEvidence = await page.evaluate(async () => ({
-    ownTabs: (await chrome.tabs.query({})).filter(tab => tab.url === 'chrome://newtab/' || tab.url === chrome.runtime.getURL('index.html')).map(tab => ({ id: tab.id, url: tab.url })),
+  const ownTabsEvidence = await page.evaluate(async (newTabUrl) => ({
+    ownTabs: (await chrome.tabs.query({})).filter(tab => tab.url === newTabUrl || tab.url === chrome.runtime.getURL('index.html')).map(tab => ({ id: tab.id, url: tab.url })),
     visibleTabs: document.querySelectorAll('.tabChip').length,
     header: document.querySelector('.header .status').textContent,
     summary: document.querySelector('#openTabsSummary').textContent,
-  }));
+  }), newTabUrl);
 
   // Canceling close-all retains the tabs; accepting it closes every own tab.
   page.once('dialog', async (dialog) => {
@@ -253,14 +258,21 @@ try {
   page.once('dialog', dialog => dialog.accept());
   const pageClosed = page.waitForEvent('close');
   const navigationClosed = navigation.waitForEvent('close');
-  await ownCard(page).locator('.domainCard__closeAll').click();
+  const pagesBeforeClose = context.pages().length;
+  try {
+    await ownCard(page).locator('.domainCard__closeAll').click();
+  } catch (error) {
+    // Closing this tab can interrupt Playwright's click acknowledgment.
+    if (!error.message.includes('Target page, context or browser has been closed')) throw error;
+  }
   await pageClosed;
   await navigationClosed;
-  assert.equal(context.pages().filter(tab => tab.url().startsWith(uiUrl) || tab.url() === 'chrome://newtab/').length, 0);
+  assert.equal(context.pages().length, pagesBeforeClose - 2, 'close-all must retain all unrelated tabs');
+  assert.equal(context.pages().filter(tab => tab.url().startsWith(uiUrl) || tab.url() === newTabUrl).length, 0);
   assert.deepEqual(errors, [], 'no page errors during acceptance');
   assert.match(await readFile(`${source}/../LICENSE`, 'utf8'), /^MIT License/);
   const result = {
-    passed: true, manifest: { name: manifest.name, version: manifest.version },
+    passed: true, channel, manifest: { name: manifest.name, version: manifest.version },
     browserVersion: context.browser().version(),
     sampleTabs: 12, ownTabsEvidence,
     checks: ['empty/first-save', 'original favicon', 'viewed/restore', 'refresh persistence', 'multi-page sync', 'search/sort preservation', 'settings removed', 'dark/mobile', 'last-delete', 'new-tab override', 'own tab counts/list', 'own tab activation', 'own tab single close', 'own duplicates across URL forms', 'URL changes/internal exclusion', 'own group close-all', 'root license present'],
