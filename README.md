@@ -95,6 +95,12 @@ Chrome 的「加载已解压的扩展程序」不能直接选择 ZIP 文件。�
 
 </details>
 
+## 问题反馈与功能建议
+
+遇到异常，请[提交问题反馈](https://github.com/Maxine0917/Qiye/issues/new?title=问题反馈：)，说明 Chrome 版本、插件版本、复现步骤，以及预期和实际表现；截图请遮挡个人信息。
+
+如果有希望改进的使用场景，欢迎[提出功能建议](https://github.com/Maxine0917/Qiye/issues/new?title=功能建议：)，描述你遇到的困扰、目前的处理方式，以及希望达到的效果。
+
 ## 隐私与数据
 
 浏览记录、保存网页和设置存储在本机的 `chrome.storage.local` 中。扩展没有账号系统，不向分析或遥测服务上传这些记录。
@@ -159,4 +165,4 @@ qiye/
 
 ## 许可与致谢
 
-项目在已有 MIT 许可代码基础上继续开发，感谢 Zara Zhang的原有贡献。版权主体、年份、MIT 授权及免责条款保留于 [LICENSE]。
+项目在已有 MIT 许可代码基础上继续开发，感谢 Zara Zhang 的原有贡献。版权主体、年份、MIT 授权及免责条款保留于 [LICENSE](LICENSE)。
