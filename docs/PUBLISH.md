@@ -17,7 +17,7 @@
 
 macOS Finder 默认隐藏点开头的项目，按 `⌘⇧.` 可显示它们。上传源码时应包含 `.gitignore` 和 `.github/`，但不要上传 `.git/`。
 
-如果使用 `qiye-源码.zip`，请先解压，再上传内部源码；只上传 ZIP 文件不会让 GitHub 在首页展示 README，也不会启用自动检查。
+如果使用 Release 的 `TabNest-Source.zip` 或本地生成的 `qiye-源码.zip`，请先解压，再上传 `qiye/` 内部源码；只上传 ZIP 文件不会让 GitHub 在首页展示 README，也不会启用自动检查。
 
 ## 用 Git 上传
 
@@ -35,13 +35,29 @@ python3 scripts/package.py
 
 只维护根目录的 `LICENSE`。打包脚本会自动将它原样加入插件包根目录，源码包也保留这一份文件；无需在 `extension/` 下另存副本。
 
-可以在 GitHub Releases 创建与插件版本一致的发布版本，把 `栖页-插件.zip` 附在其中。源码、下载包和 Chrome Web Store 发布是不同的交付方式；上传 GitHub 不会自动上架扩展商店。
+## GitHub Release 的附件命名
+
+本地脚本和 Actions 的输出文件名保持不变。上传到 Releases 前，复制并命名为：
+
+| 本地 / Actions 输出 | Release 附件名称 | 用途 |
+| --- | --- | --- |
+| `dist/栖页-插件.zip` | `TabNest-Chrome.zip` | 普通用户解压后，加载直接包含 `manifest.json` 的目录 |
+| `dist/qiye-源码.zip` | `TabNest-Source.zip` | 开发者解压后，加载 `qiye/extension/` |
+
+仅复制并改名，无需改变 ZIP 内部结构。插件包内保留运行资源与 `LICENSE`；完整源码包保留 `qiye/` 外层目录。详细安装步骤见[安装与更新](INSTALL.md)。
+
+在 GitHub Releases 创建与 `extension/manifest.json` 的版本号一致的标签（例如插件版本 `2.0.2` 对应 `v2.0.2`），上传以上两份附件。README 的 `/releases/latest/download/TabNest-Chrome.zip` 和 `TabNest-Source.zip` 依赖这两个固定名称，每次发布应保持一致。
+
+GitHub Actions 对每次 push 和 pull request 执行回归测试、后台启动检查、Chrome 浏览器验收与打包；通过后可下载 `qiye-packages`。`qiye-browser-check` 保留截图及 `result.json`，失败时尽可能附带失败截图，保留 14 天。
+
+目前 Release 仍需手动发布，Actions 不会自动创建版本或上传 Release 附件。源码、下载包和 Chrome Web Store 发布是不同的交付方式；上传 GitHub 不会自动上架扩展商店。
 
 ## 发布前核对
 
 - `extension/manifest.json` 中名称和图标路径正确。
 - README 中的图片和文档链接可在仓库内打开。
 - 根目录的 `LICENSE` 通过校验，插件包中的 `LICENSE` 与其内容一致。
-- 回归测试与后台启动检查通过。
-- 用独立浏览器确认新标签页、保存与已查看流程。
+- 回归测试、后台启动检查与 Chrome 浏览器自动验收通过。
+- 查看 `qiye-browser-check` 结果；新标签页、保存、已查看、刷新保留和多页面同步均正常。
 - 下载包可以解压，加载目录内包含 `manifest.json`。
+- Release 标签与插件版本号一致，附件名为 `TabNest-Chrome.zip` 和 `TabNest-Source.zip`，README 的下载入口可用。

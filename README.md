@@ -93,23 +93,29 @@
 
 Agent 会帮你准备安装文件；Chrome 中的加载操作仍需你确认。无需安装 Node.js、Python 或运行打包脚本。安装目录请保留，后续更新沿用同一路径。
 
-### 从源码安装
-
-1. 在本仓库点击 **Code → Download ZIP**，下载后解压。
-2. 在 Chrome 地址栏输入 `chrome://extensions`，打开右上角的**开发者模式**。
-3. 点击**加载已解压的扩展程序**，选择解压后的 **`extension` 文件夹**。
-4. 新建一个标签页，进入栖页。
-
-请选择包含 `manifest.json` 的目录。扩展运行不需要 Node.js、Python 或服务器。
-
 ### 从插件包安装
+
+推荐普通用户使用此方式。扩展运行不需要 Node.js、Python 或服务器。
 
 1. [下载最新版 TabNest-Chrome.zip](https://github.com/Maxine0917/Qiye/releases/latest/download/TabNest-Chrome.zip)，解压到长期保留的目录。
 2. 在 Chrome 地址栏输入 `chrome://extensions`，打开右上角的**开发者模式**。
-3. 点击**加载已解压的扩展程序**，选择解压后含 `manifest.json` 的目录。
+3. 点击**加载已解压的扩展程序**，选择解压后直接包含 `manifest.json` 的目录。
 4. 新建一个标签页，进入栖页。
 
-Chrome 的「加载已解压的扩展程序」不能直接选择 ZIP 文件。如果出现新标签页被扩展更改的提示，选择「保持现状」即可继续使用栖页。通过本地脚本或 Actions 获得的 `栖页-插件.zip` 使用相同的安装方式。下载源码请前往 [Releases](https://github.com/Maxine0917/Qiye/releases/latest)，选择 `TabNest-Source.zip`。
+Chrome 的「加载已解压的扩展程序」不能直接选择 ZIP 文件。插件包解压后的加载目录应直接包含 `manifest.json`、`index.html`、`background/`、`icons/` 和 `LICENSE`，无需再寻找 `extension/`。如果出现新标签页被扩展更改的提示，选择「保持现状」即可继续使用栖页。
+
+详细目录示例与常见问题见[安装与更新](docs/INSTALL.md)。本地脚本或 Actions 生成的 `栖页-插件.zip` 使用相同方式安装。
+
+### 从源码安装
+
+适合想查看或修改代码的用户。
+
+1. 下载 [TabNest-Source.zip](https://github.com/Maxine0917/Qiye/releases/latest/download/TabNest-Source.zip)，或在本仓库点击 **Code → Download ZIP**。
+2. 解压到长期保留的目录，在 Chrome 打开 `chrome://extensions` 并开启**开发者模式**。
+3. 点击**加载已解压的扩展程序**，选择源码中的 **`extension` 文件夹**，它直接包含 `manifest.json`。
+4. 点击浏览器的「＋」，确认栖页正常显示。
+
+完整源码包的加载路径为 `qiye/extension/`；Code 下载的 ZIP 外层文件夹名称随分支变化，始终选择其中的 `extension/`。根目录 `LICENSE` 请与源码一起保留。
 
 ### 更新已有安装
 
@@ -157,13 +163,14 @@ dist/
 浏览器验收需要另行安装 Playwright，并安装可用的 Chrome：
 
 ```bash
-npm install --no-save --package-lock=false playwright
+npm install --no-save --package-lock=false playwright@1.65.0
+npx playwright install chrome
 node extension/tests/browser-ui.mjs
 ```
 
-验收使用独立临时浏览器配置，覆盖保存、已查看、刷新保留、多页面同步、主题和窄屏布局。若 Playwright 位于其他位置，可用 `PLAYWRIGHT_MODULE` 指定模块入口；截图默认保存到系统临时目录，可用 `QIYE_SCREENSHOT_DIR` 调整。
+验收使用独立临时浏览器配置，覆盖新标签页、保存、已查看、刷新保留、多页面同步、主题和窄屏布局，不使用日常 Chrome 配置。若 Playwright 位于其他位置，可用 `PLAYWRIGHT_MODULE` 指定模块入口；截图和 `result.json` 默认保存到系统临时目录，可用 `QIYE_SCREENSHOT_DIR` 调整。Linux 环境可用 `npx playwright install --with-deps chrome` 一并安装所需系统依赖。
 
-GitHub Actions 会执行回归测试、后台启动检查和打包，通过后可在该次运行的 Artifacts 中下载 `qiye-packages`。
+每次 push 和 pull request，GitHub Actions 都会执行回归测试、后台启动检查、真实 Chrome 浏览器验收和打包。通过后可在该次运行的 Artifacts 中下载 `qiye-packages`；`qiye-browser-check` 保存验收截图与结果，保留 14 天。浏览器操作失败时会尽可能额外保存 `failure.png` 和诊断结果，方便定位问题。
 
 ## 项目结构
 

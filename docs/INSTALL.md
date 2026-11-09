@@ -1,10 +1,60 @@
 # 安装与更新栖页
 
-## 首次安装
+## 从插件包安装（推荐）
 
-下载源码后，在 Chrome 的 `chrome://extensions` 开启开发者模式，加载 `qiye/extension/`。
+1. [下载最新版 TabNest-Chrome.zip](https://github.com/Maxine0917/Qiye/releases/latest/download/TabNest-Chrome.zip)，解压到长期保留的目录。
+2. 在 Chrome 地址栏输入 `chrome://extensions`，打开右上角的**开发者模式**。
+3. 点击**加载已解压的扩展程序**，选择解压后直接包含 `manifest.json` 的目录。
+4. 点击浏览器的「＋」，确认栖页正常显示。如果 Chrome 提示新标签页已被扩展更改，选择**保持现状**。
 
-也可以解压 `栖页-插件.zip`，直接加载含 `manifest.json` 的目录。
+插件包解压后的加载目录如下，文件夹名称可自行选择：
+
+```text
+TabNest-Chrome/          ← Chrome 加载这个目录
+├── manifest.json
+├── index.html
+├── background/
+├── ui/
+├── icons/
+└── LICENSE
+```
+
+Chrome 不能直接加载 ZIP，也不能选择 `manifest.json` 文件本身。插件包无需再选择 `extension/` 子目录。安装后请保留整个加载目录；使用栖页不需要 Node.js、Python 或服务器。
+
+本地打包或 GitHub Actions 中的 `栖页-插件.zip` 与 Release 的 `TabNest-Chrome.zip` 采用相同的目录结构和安装步骤。
+
+## 从源码安装（进阶）
+
+1. 下载 [TabNest-Source.zip](https://github.com/Maxine0917/Qiye/releases/latest/download/TabNest-Source.zip)，或使用仓库的 **Code → Download ZIP**，解压到长期保留的目录。
+2. 在 `chrome://extensions` 开启**开发者模式**，点击**加载已解压的扩展程序**。
+3. 选择源码中的 `extension/` 文件夹，再点击浏览器的「＋」验证。
+
+`TabNest-Source.zip` 解压后为 `qiye/extension/`；Code 下载的 ZIP 外层目录随分支变化，选择其中的 `extension/` 即可：
+
+```text
+qiye/
+├── LICENSE             ← 与源码一起保留
+├── README.md
+└── extension/          ← Chrome 加载这个目录
+    ├── manifest.json
+    ├── index.html
+    └── ...
+```
+
+## 更新已有安装
+
+1. 在 `chrome://extensions` 的扩展详情中核对原加载目录。
+2. 下载新版 `TabNest-Chrome.zip`，先解压检查，再将运行文件更新到原加载目录。如果原来从源码加载，更新的是源码中的 `extension/`，不要改为加载外层目录。
+3. 在扩展卡片上点击 **↻ 重新加载**，再新建标签页确认。
+
+同一路径更新通常保留本地数据。换目录或卸载后重新安装可能改变扩展身份，不会自动迁移保存网页与设置；更新前请保留原安装，数据能力见下方说明。
+
+## 常见安装问题
+
+- **提示找不到清单文件：**选择的目录必须直接包含 `manifest.json`；检查是否多选了外层文件夹。
+- **点击「＋」仍是其他页面：**确认栖页已启用，并检查是否有其他扩展接管新标签页；无需立即卸载栖页。
+- **文件夹被移动或删除：**Chrome 会继续引用原路径，可能无法加载。尽量将文件放在长期保留的位置。
+- **更新后名称或图标没变：**需要在扩展管理页重新加载，仅刷新网页不够。
 
 ## 已加载扩展但名称仍旧
 

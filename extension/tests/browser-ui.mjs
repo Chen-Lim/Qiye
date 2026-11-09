@@ -5,7 +5,7 @@
  */
 import assert from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
-import { readFile, mkdir } from 'node:fs/promises';
+import { readFile, mkdir, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 
@@ -167,22 +167,36 @@ try {
   await newTab.screenshot({ path: `${output}/栖页-新标签页验收.png`, fullPage: true });
   assert.deepEqual(errors, [], 'no page errors during acceptance');
   assert.match(await readFile(`${source}/../LICENSE`, 'utf8'), /^MIT License/);
-  console.log(JSON.stringify({
+  const result = {
     passed: true, manifest: { name: manifest.name, version: manifest.version },
-    sampleTabs: 12, checks: ['empty/first-save', 'original favicon', 'viewed/restore', 'refresh persistence', 'multi-page sync', 'search/sort preservation', 'settings removed', 'dark/mobile', 'last-delete', 'root license present'],
-    screenshots: ['未保存', '首次保存', '保存与已查看', '精简设置', '深色', '手机布局'].map((state) => `${output}/栖页-${state}.png`),
+    browserVersion: context.browser().version(),
+    sampleTabs: 12, checks: ['empty/first-save', 'original favicon', 'viewed/restore', 'refresh persistence', 'multi-page sync', 'search/sort preservation', 'settings removed', 'dark/mobile', 'last-delete', 'new-tab override', 'root license present'],
+    screenshots: ['未保存', '首次保存', '保存与已查看', '精简设置', '深色', '手机布局', '新标签页验收'].map((state) => `${output}/栖页-${state}.png`),
     pageErrors: errors,
-  }, null, 2));
+  };
+  await writeFile(path.join(output, 'result.json'), JSON.stringify(result, null, 2));
+  console.log(JSON.stringify(result, null, 2));
 } catch (error) {
-  if (page) console.error(JSON.stringify(await page.evaluate(async () => ({
-    saved: await chrome.runtime.sendMessage({ type: 'REQ_GET_SAVED' }),
-    count: document.querySelector('.sidebar__count')?.textContent,
-    entries: [...document.querySelectorAll('.sidebar__entry')].map(el => ({
-      id: el.dataset.entryId, checked: el.querySelector('input').checked,
-      viewed: !!el.closest('.sidebar__viewedList'), text: el.textContent,
-    })),
-    feedback: document.querySelector('.sidebar__feedback')?.textContent,
-  })), null, 2));
+  const failure = { passed: false, error: error.stack || String(error), pageErrors: errors };
+  if (page && !page.isClosed()) {
+    try {
+      await page.screenshot({ path: path.join(output, 'failure.png'), fullPage: true, timeout: 5000 });
+      failure.page = await page.evaluate(() => ({
+        url: location.href,
+        count: document.querySelector('.sidebar__count')?.textContent,
+        entries: [...document.querySelectorAll('.sidebar__entry')].map(el => ({
+          id: el.dataset.entryId, checked: el.querySelector('input')?.checked,
+          viewed: !!el.closest('.sidebar__viewedList'), text: el.textContent,
+        })),
+        feedback: document.querySelector('.sidebar__feedback')?.textContent,
+      }));
+    } catch (diagnosticError) {
+      failure.diagnosticError = String(diagnosticError);
+    }
+  }
+  await writeFile(path.join(output, 'result.json'), JSON.stringify(failure, null, 2))
+    .catch(diagnosticError => console.error('Could not save failure diagnostics:', diagnosticError));
+  console.error(JSON.stringify(failure, null, 2));
   throw error;
 } finally {
   await context.close();
