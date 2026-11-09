@@ -4,11 +4,10 @@
  */
 
 import { h } from '../utils/dom.js';
-import { getHostname, isHomepage, groupByDomain } from '../utils/domain.js';
+import { getHostname, getTabGroupKey, isHomepage, groupByDomain } from '../utils/domain.js';
 import { normalizeUrl } from '../../shared/hostname.js';
-import { FAVICON_FALLBACK } from '../../shared/constants.js';
 import { create as createCard, updateTime as updateCardTime, updateBudget } from '../components/domainCard.js';
-import { create as createChip, updateBadge as updateChipBadge, updateSaved } from '../components/tabChip.js';
+import { create as createChip, updateInfo as updateChipInfo, updateBadge as updateChipBadge, updateSaved } from '../components/tabChip.js';
 import { render as renderHomepages } from './homepagesGroup.js';
 import { resolveBudget, budgetStatus } from './groupingView.js';
 import { appendDomainCard, renderDomainGroups, updateGroupingSection } from './tabsGridGrouping.js';
@@ -48,7 +47,7 @@ export function render(root, tabs, options = {}) {
 
   if (groups.length === 0 && homepages.length === 0) {
     rootEl.appendChild(h('p', { class: 'tabsGrid__empty' }, [
-      '暂无可分组的标签页。（chrome:// 和扩展页不显示）',
+      '暂无可分组的标签页。',
     ]));
   }
 
@@ -189,7 +188,7 @@ export function bindEvents(root, handlers) {
 /** 供外层根据 hostname 查 tabId 列表 */
 export function getTabIdsByHostname(hostname) {
   return Array.from(currentTabs.values())
-    .filter((t) => !isHomepage(t.url) && getHostname(t.url) === hostname)
+    .filter((t) => !isHomepage(t.url) && getTabGroupKey(t.url) === hostname)
     .map((t) => t.id);
 }
 
@@ -248,7 +247,7 @@ export function getChipCenter(tabId) {
 
 function bucketKeyFor(tabInfo) {
   if (isHomepage(tabInfo.url)) return '__homepages';
-  return getHostname(tabInfo.url) || '__invalid';
+  return getTabGroupKey(tabInfo.url) || '__invalid';
 }
 
 function insertChipForTab(tabInfo) {
@@ -298,15 +297,7 @@ function removeChipForTab(tabId) {
 
 function updateChipInPlace(tabInfo) {
   const chip = rootEl.querySelector(`.tabChip[data-tab-id="${tabInfo.id}"]`);
-  if (!chip) return;
-  const titleEl = chip.querySelector('.tabChip__title');
-  if (titleEl) {
-    titleEl.textContent = tabInfo.title || tabInfo.url || '(untitled)';
-    titleEl.setAttribute('title', tabInfo.title || tabInfo.url);
-    titleEl.setAttribute('href', tabInfo.url);
-  }
-  const fav = chip.querySelector('.tabChip__favicon');
-  if (fav) fav.setAttribute('src', tabInfo.favIconUrl || FAVICON_FALLBACK);
+  updateChipInfo(chip, tabInfo);
 }
 
 function updateCardCount(card) {
@@ -318,13 +309,13 @@ function updateCardCount(card) {
 function updateSummary() {
   const summary = document.getElementById('openTabsSummary');
   if (!summary) return;
-  const tabs = Array.from(currentTabs.values()).filter((tab) => getHostname(tab.url));
-  const hosts = new Set(tabs.map((tab) => getHostname(tab.url)));
+  const tabs = Array.from(currentTabs.values()).filter((tab) => getTabGroupKey(tab.url));
+  const hosts = new Set(tabs.map((tab) => getTabGroupKey(tab.url)));
   summary.textContent = `${hosts.size} 个网站 · ${tabs.length} 个标签页`;
 }
 
 export function getVisibleTabCount() {
-  return Array.from(currentTabs.values()).filter((tab) => getHostname(tab.url)).length;
+  return Array.from(currentTabs.values()).filter((tab) => getTabGroupKey(tab.url)).length;
 }
 
 function removeEmptyState() {

@@ -64,7 +64,17 @@ try {
   }
   await page.reload();
   await page.locator('.tabChip').first().waitFor();
-  await page.waitForFunction(() => document.querySelectorAll('.tabChip').length === 12);
+  const waitForCount = async (target, count) => {
+    await target.waitForFunction((expected) => {
+      const chips = document.querySelectorAll('.tabChip:not(.tabChip--leaving)').length;
+      return chips === expected
+        && document.querySelector('.header .status')?.textContent.startsWith(`${expected} 个标签页`)
+        && document.querySelector('#openTabsSummary')?.textContent.endsWith(`${expected} 个标签页`);
+    }, count);
+  };
+  const ownCard = (target) => target.locator('.domainCard[data-hostname="__qiye"]');
+  await waitForCount(page, 13);
+  assert.equal(await ownCard(page).locator('.tabChip').count(), 1);
   assert.equal(await page.title(), '栖页');
   const manifest = await page.evaluate(() => chrome.runtime.getManifest());
   assert.equal(manifest.name, '栖页');
@@ -78,8 +88,15 @@ try {
   peer.on('pageerror', (error) => errors.push(error.message));
   await peer.goto(uiUrl);
   await peer.locator('.tabChip').first().waitFor();
-  const savedChipId = await page.locator('.tabChip').first().getAttribute('data-tab-id');
-  await page.locator('.tabChip__save').first().click();
+  await waitForCount(page, 14);
+  await waitForCount(peer, 14);
+  assert.equal(await ownCard(page).locator('.tabChip').count(), 2);
+  assert.equal(await ownCard(page).locator('.domainCard__title').textContent(), '栖页');
+  assert.equal(await ownCard(page).locator('.tabChip__save:not([hidden])').count(), 0);
+  assert.ok((await ownCard(page).locator('.tabChip__favicon').first().getAttribute('src')).endsWith('/icons/icon48.png'));
+  const firstSave = page.locator('.tabChip__save:not([hidden])').first();
+  const savedChipId = await firstSave.getAttribute('data-tab-id');
+  await firstSave.click();
   await page.locator('.sidebar__entry').first().waitFor();
   await peer.locator('.sidebar__entry').first().waitFor();
   assert.equal(await page.locator('.sidebar__entry').count(), 1, 'first save cannot duplicate');
@@ -118,7 +135,7 @@ try {
   }
 
   // Two lists and search/disclosure state survive broadcasts from another page.
-  await page.locator(`.tabChip:not([data-tab-id="${savedChipId}"]) .tabChip__save`).first().click();
+  await page.locator(`.tabChip:not([data-tab-id="${savedChipId}"]) .tabChip__save:not([hidden])`).first().click();
   await page.waitForFunction(() => document.querySelector('.sidebar__count')?.textContent === '2');
   await page.locator('.sidebar__check').first().click();
   await page.waitForFunction(() => document.querySelector('.sidebar__count')?.textContent === '1');
@@ -126,7 +143,7 @@ try {
   await page.locator('.sidebar__sort').selectOption('oldest');
   const open = await page.locator('.sidebar__viewed').evaluate((el) => el.open);
   if (!open) await page.locator('.sidebar__viewedToggle').click();
-  await peer.locator('.tabChip__save:not(:disabled)').first().click();
+  await peer.locator('.tabChip__save:not(:disabled):not([hidden])').first().click();
   await page.waitForFunction(() => document.querySelector('.sidebar__count')?.textContent === '2');
   assert.equal(await page.locator('.sidebar__search').first().inputValue(), '记录');
   assert.equal(await page.locator('.sidebar__sort').inputValue(), 'oldest');
@@ -164,14 +181,90 @@ try {
   await newTab.locator('.brand').waitFor();
   assert.equal(await newTab.locator('.brand').textContent(), '栖页');
   assert.equal(await newTab.evaluate(() => chrome.runtime.getManifest().name), '栖页');
+  await waitForCount(page, 15);
+  await waitForCount(peer, 15);
+  await waitForCount(newTab, 15);
+  assert.equal(await ownCard(page).locator('.tabChip').count(), 3, 'direct and new-tab URLs share a group');
   await newTab.screenshot({ path: `${output}/栖页-新标签页验收.png`, fullPage: true });
+
+  // Activate an existing own tab without creating another one.
+  const peerId = await peer.evaluate(async () => (await chrome.tabs.getCurrent()).id);
+  const newTabId = await newTab.evaluate(async () => (await chrome.tabs.getCurrent()).id);
+  const pagesBeforeActivate = context.pages().length;
+  await ownCard(page).locator(`.tabChip[data-tab-id="${peerId}"] .tabChip__title`).click();
+  await page.waitForFunction(async (expected) => (await chrome.tabs.query({ active: true, currentWindow: true }))[0]?.id === expected, peerId);
+  assert.equal(context.pages().length, pagesBeforeActivate);
+  await waitForCount(page, 15);
+
+  // Closing one own tab updates the other pages immediately.
+  await ownCard(page).locator(`.tabChip[data-tab-id="${newTabId}"] .tabChip__close`).click();
+  await waitForCount(page, 14);
+  await waitForCount(peer, 14);
+  assert.equal(await page.evaluate(async (tabId) => (await chrome.tabs.query({})).some(tab => tab.id === tabId), newTabId), false);
+  const duplicate = await context.newPage();
+  duplicate.on('pageerror', (error) => errors.push(error.message));
+  await duplicate.goto('chrome://newtab/');
+  await waitForCount(page, 15);
+  await duplicate.locator('.brand').waitFor();
+  let duplicatePrompt;
+  page.once('dialog', async (dialog) => {
+    duplicatePrompt = dialog.message();
+    await dialog.accept();
+  });
+  await ownCard(page).locator('.domainCard__closeDupes').click();
+  await waitForCount(page, 13);
+  assert.match(duplicatePrompt, /关闭 2 个重复标签页/);
+  assert.equal(await ownCard(page).locator('.tabChip').count(), 1);
+  assert.equal(await ownCard(page).locator('.domainCard__closeDupes').isVisible(), false);
+
+  // A live tab moves in/out of the group as its URL changes.
+  const navigation = await context.newPage();
+  navigation.on('pageerror', (error) => errors.push(error.message));
+  await navigation.goto('chrome://newtab/');
+  await waitForCount(page, 14);
+  await navigation.goto('http://code.qiye.test/navigation/0');
+  await waitForCount(page, 14);
+  assert.equal(await ownCard(page).locator('.tabChip').count(), 1);
+  await navigation.goto('chrome://settings/');
+  await waitForCount(page, 13);
+  await navigation.goto('chrome://newtab/');
+  await waitForCount(page, 14);
+  await page.reload();
+  await waitForCount(page, 14);
+  await waitForCount(navigation, 14);
+  assert.equal(await ownCard(page).locator('.tabChip').count(), 2);
+  await page.evaluate(() => chrome.runtime.sendMessage({ type: 'REQ_SET_THEME', theme: 'light' }));
+  await page.waitForFunction(() => document.documentElement.dataset.theme === 'light');
+  await page.screenshot({ path: `${output}/栖页-自身标签页.png`, fullPage: true });
+  const ownTabsEvidence = await page.evaluate(async () => ({
+    ownTabs: (await chrome.tabs.query({})).filter(tab => tab.url === 'chrome://newtab/' || tab.url === chrome.runtime.getURL('index.html')).map(tab => ({ id: tab.id, url: tab.url })),
+    visibleTabs: document.querySelectorAll('.tabChip').length,
+    header: document.querySelector('.header .status').textContent,
+    summary: document.querySelector('#openTabsSummary').textContent,
+  }));
+
+  // Canceling close-all retains the tabs; accepting it closes every own tab.
+  page.once('dialog', async (dialog) => {
+    assert.match(dialog.message(), /关闭 栖页 下的 2 个标签页/);
+    await dialog.dismiss();
+  });
+  await ownCard(page).locator('.domainCard__closeAll').click();
+  await waitForCount(page, 14);
+  page.once('dialog', dialog => dialog.accept());
+  const pageClosed = page.waitForEvent('close');
+  const navigationClosed = navigation.waitForEvent('close');
+  await ownCard(page).locator('.domainCard__closeAll').click();
+  await pageClosed;
+  await navigationClosed;
+  assert.equal(context.pages().filter(tab => tab.url().startsWith(uiUrl) || tab.url() === 'chrome://newtab/').length, 0);
   assert.deepEqual(errors, [], 'no page errors during acceptance');
   assert.match(await readFile(`${source}/../LICENSE`, 'utf8'), /^MIT License/);
   const result = {
     passed: true, manifest: { name: manifest.name, version: manifest.version },
     browserVersion: context.browser().version(),
-    sampleTabs: 12, checks: ['empty/first-save', 'original favicon', 'viewed/restore', 'refresh persistence', 'multi-page sync', 'search/sort preservation', 'settings removed', 'dark/mobile', 'last-delete', 'new-tab override', 'root license present'],
-    screenshots: ['未保存', '首次保存', '保存与已查看', '精简设置', '深色', '手机布局', '新标签页验收'].map((state) => `${output}/栖页-${state}.png`),
+    sampleTabs: 12, ownTabsEvidence,
+    checks: ['empty/first-save', 'original favicon', 'viewed/restore', 'refresh persistence', 'multi-page sync', 'search/sort preservation', 'settings removed', 'dark/mobile', 'last-delete', 'new-tab override', 'own tab counts/list', 'own tab activation', 'own tab single close', 'own duplicates across URL forms', 'URL changes/internal exclusion', 'own group close-all', 'root license present'],
+    screenshots: ['未保存', '首次保存', '保存与已查看', '精简设置', '深色', '手机布局', '新标签页验收', '自身标签页'].map((state) => `${output}/栖页-${state}.png`),
     pageErrors: errors,
   };
   await writeFile(path.join(output, 'result.json'), JSON.stringify(result, null, 2));

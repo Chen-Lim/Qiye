@@ -27,6 +27,7 @@ import { $ } from './utils/dom.js';
 import { playSwoosh } from './utils/audio.js';
 import { burst as confettiBurst } from './utils/confetti.js';
 import { applyTheme } from './theme.js';
+import { getGroupLabel } from './utils/domain.js';
 
 let lastState = null;  // 缓存 global state，更新 status 行用
 
@@ -228,7 +229,7 @@ async function main() {
     onCloseAll: async (hostname) => {
       const ids = tabsGrid.getTabIdsByHostname(hostname);
       if (ids.length === 0) return;
-      if (!confirm(`关闭 ${hostname} 下的 ${ids.length} 个标签页？`)) return;
+      if (!confirm(`关闭 ${getGroupLabel(hostname)} 下的 ${ids.length} 个标签页？`)) return;
       closeWithFx(ids, { pitch: 0.7, stagger: 30 });
       try {
         await Promise.all(ids.map((id) => messaging.closeTab(id)));

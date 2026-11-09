@@ -71,6 +71,7 @@ await import('./timeTracker.test.js');
 // Import additional test files.
 await import('./formatDuration.test.js');
 await import('./hostname.test.js');
+await import('./domain.test.js');
 await import('./privateMode.test.js');
 await import('./configService.test.js');
 await import('./savedStore.test.js');

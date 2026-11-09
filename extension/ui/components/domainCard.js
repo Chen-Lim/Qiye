@@ -20,6 +20,7 @@ import { h } from '../utils/dom.js';
 import { create as createChip } from './tabChip.js';
 import { formatDurationCompact } from '../utils/formatDuration.js';
 import { FAVICON_FALLBACK } from '../../shared/constants.js';
+import { getGroupLabel, getTabFavicon } from '../utils/domain.js';
 
 /**
  * @param {string} hostname
@@ -27,17 +28,18 @@ import { FAVICON_FALLBACK } from '../../shared/constants.js';
  * @returns {HTMLElement}
  */
 export function create(hostname, tabs) {
+  const label = getGroupLabel(hostname);
   const chipsWrap = h('div', { class: 'domainCard__chips' });
   for (const t of tabs) chipsWrap.appendChild(createChip(t));
 
   const identity = h('div', { class: 'domainCard__identity' }, [
     h('img', {
       class: 'domainCard__favicon',
-      src: tabs.find((tab) => tab.favIconUrl)?.favIconUrl || FAVICON_FALLBACK,
+      src: tabs.map(getTabFavicon).find(Boolean) || FAVICON_FALLBACK,
       alt: '',
       onerror: (e) => { e.target.src = FAVICON_FALLBACK; },
     }),
-    h('h3', { class: 'domainCard__title', title: hostname }, [hostname]),
+    h('h3', { class: 'domainCard__title', title: label }, [label]),
     h('span', { class: 'domainCard__count' }, [`(${tabs.length})`]),
   ]);
   const actions = h('div', { class: 'domainCard__actions' }, [
@@ -46,14 +48,14 @@ export function create(hostname, tabs) {
       'data-action': 'close-duplicates',
       'data-hostname': hostname,
       title: '关闭当前卡片中的重复标签页，每个网址保留一个',
-      'aria-label': `关闭 ${hostname} 下的重复标签页，每个网址保留一个`,
+      'aria-label': `关闭 ${label} 下的重复标签页，每个网址保留一个`,
       hidden: '',
     }, ['关闭重复']),
     h('button', {
       class: 'domainCard__closeAll',
       'data-action': 'close-all',
       'data-hostname': hostname,
-      'aria-label': `关闭 ${hostname} 下的全部标签页`,
+      'aria-label': `关闭 ${label} 下的全部标签页`,
       title: '关闭当前卡片中的全部标签页',
     }, ['关闭全部']),
   ]);
