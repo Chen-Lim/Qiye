@@ -33,13 +33,15 @@ python3 scripts/package.py
 
 生成 `dist/栖页-插件.zip` 和 `dist/qiye-源码.zip`。插件包包含运行资源和 MIT 许可证；源码包包含文档、测试和自动检查配置，不包含 `.git/` 等本地元数据。
 
+只维护根目录的 `LICENSE`。打包脚本会自动将它原样加入插件包根目录，源码包也保留这一份文件；无需在 `extension/` 下另存副本。
+
 可以在 GitHub Releases 创建与插件版本一致的发布版本，把 `栖页-插件.zip` 附在其中。源码、下载包和 Chrome Web Store 发布是不同的交付方式；上传 GitHub 不会自动上架扩展商店。
 
 ## 发布前核对
 
 - `extension/manifest.json` 中名称和图标路径正确。
 - README 中的图片和文档链接可在仓库内打开。
-- 根目录与插件目录的 `LICENSE` 相同，原版权和许可完整。
+- 根目录的 `LICENSE` 通过校验，插件包中的 `LICENSE` 与其内容一致。
 - 回归测试与后台启动检查通过。
 - 用独立浏览器确认新标签页、保存与已查看流程。
 - 下载包可以解压，加载目录内包含 `manifest.json`。

@@ -43,8 +43,6 @@ def validate():
     )):
         raise ValueError("发布包名称必须为栖页")
     license_text = (ROOT / "LICENSE").read_text(encoding="utf-8")
-    if (EXTENSION / "LICENSE").read_text(encoding="utf-8") != license_text:
-        raise ValueError("项目与插件 LICENSE 必须一致")
     if not any(re.fullmatch(
         r"Copyright\s+(?:\(c\)|©)\s+\d{4}(?:\s*-\s*\d{4})?\s+\S.*",
         line.strip(), re.IGNORECASE,
@@ -55,7 +53,7 @@ def validate():
 
 
 def runtime_files():
-    files = []
+    files = [(ROOT / "LICENSE", "LICENSE")]
     for file in sorted(EXTENSION.rglob("*")):
         if not file.is_file() or file.is_symlink():
             continue
@@ -64,7 +62,7 @@ def runtime_files():
             continue
         if file.name == "config.local.js":
             continue
-        if file.name == "LICENSE" or file.suffix in ALLOWED_SUFFIXES:
+        if file.suffix in ALLOWED_SUFFIXES:
             files.append((file, relative.as_posix()))
     return files
 
