@@ -1,24 +1,63 @@
 <p align="center">
-  <img src="docs/assets/logo.png" width="88" height="88" alt="栖页 · 栖息小鸟" />
+  <img src="docs/assets/logo.png" width="64" height="64" alt="栖页 · 栖息小鸟" />
 </p>
 
 <h1 align="center">栖页 · TabNest</h1>
 
-<p align="center">网页太多找不到，想读的舍不得关，忙完却不知道时间去了哪？</p>
+<p align="center">找回打开的网页，收好稍后想读的内容，回看时间花在哪里。</p>
 
-**栖页是从日常查资料、做项目的具体困扰出发，持续改进的 Chrome 新标签页扩展。** 点击浏览器的「＋」，就能看清已经打开的网页、找回目标标签、收好稍后想读的内容，也能通过专注计时和浏览统计照顾自己的注意力。
+栖页是一个 Chrome 新标签页扩展。点击浏览器的「＋」，把已打开标签、稍后阅读和浏览统计放在同一个工作台上。
 
-**Chrome Manifest V3 · 本地存储 · 无需注册 · MIT 许可**
+Chrome Manifest V3 · 本地存储 · 无需注册
 
-[下载插件](https://github.com/Maxine0917/Qiye/releases/latest/download/TabNest-Chrome.zip) · [让 Agent 帮你安装](#让-agent-帮你安装) · [安装步骤](#从插件包安装) · [版本说明](https://github.com/Maxine0917/Qiye/releases/latest) · [反馈建议](#问题反馈与功能建议)
+**[下载插件 ZIP](https://github.com/Maxine0917/Qiye/releases/latest/download/TabNest-Chrome.zip)** · [四步安装](#从插件包安装) · [让 Agent 帮你安装](#让-agent-帮你安装)
 
 ![打开与跳转：浏览器已有许多标签，点击加号打开栖页，再点击标题切回原标签页](docs/assets/open-and-switch.gif)
 
+## 快速安装
+
+### 从插件包安装
+
+1. [下载 TabNest-Chrome.zip](https://github.com/Maxine0917/Qiye/releases/latest/download/TabNest-Chrome.zip)，解压到长期保留的目录。
+2. 在 Chrome 地址栏输入 `chrome://extensions`，打开右上角的**开发者模式**。
+3. 点击**加载未打包的扩展程序**，选择解压后直接包含 `manifest.json` 的文件夹。
+4. 点击浏览器的「＋」，进入栖页；若提示新标签页被更改，选择**保持现状**。
+
+部分 Chrome 版本将第 3 步按钮称为「加载已解压的扩展程序」。选择文件夹即可，不能直接选择 ZIP 或 `manifest.json` 文件。插件包内无需再寻找 `extension/`，安装目录请保留。**使用插件不需要 Node.js、Python 或服务器。**
+
+<details>
+<summary>看完整安装动图：下载 → 解压 → 加载 → 打开栖页</summary>
+
+![完整安装：从 GitHub 下载插件包，在 macOS 解压并核对 manifest.json，在 Chrome 开启开发者模式、选择运行文件夹，点击原生加号打开栖页](docs/assets/install.gif)
+
+录制使用 macOS、真实 v2.0.2 插件包和独立 Chrome 配置，添加了鼠标与步骤提示并做了剪辑。其他系统的解压和文件选择界面可能不同；Chrome 中的加载方式相同。
+
+</details>
+
+### 让 Agent 帮你安装
+
+复制下面的指令，发给能联网并操作本机文件的 Agent：
+
+```text
+请帮我把 https://github.com/Maxine0917/Qiye 的栖页（TabNest）插件安装到本机 Chrome：先阅读仓库 README 和 docs/INSTALL.md，再从 https://github.com/Maxine0917/Qiye/releases/latest/download/TabNest-Chrome.zip 下载最新版插件包，解压到长期保留的目录并保留包内 LICENSE（若已有安装，先确认原安装路径再处理），找到并核对 manifest.json，给出它所在文件夹的绝对路径，再引导我在 chrome://extensions 开启开发者模式、点击“加载未打包的扩展程序”（部分版本叫“加载已解压的扩展程序”）并选择该文件夹，最后点击浏览器的“＋”确认栖页正常显示。
+```
+
+Agent 帮你准备安装文件，Chrome 中的加载操作仍需你确认。后续更新沿用同一路径。
+
+<details>
+<summary>从源码安装与更新已有安装</summary>
+
+从 [TabNest-Source.zip](https://github.com/Maxine0917/Qiye/releases/latest/download/TabNest-Source.zip) 安装，选择 `qiye/extension/`；从 **Code → Download ZIP** 安装，选择解压目录中的 `extension/`。它们都直接包含 `manifest.json`，根目录的 `LICENSE` 请与源码一起保留。
+
+更新时，先核对扩展详情中的原加载目录，更新该目录的文件，再在扩展卡片上点击 **↻ 重新加载**，最后新建标签页。只刷新网页不会更新 Chrome 记录的名称和图标。换目录可能改变扩展身份，数据不会自动迁移。
+
+</details>
+
+详细目录示例、更新步骤与常见问题见[安装与更新](docs/INSTALL.md)；当前版本说明见 [Release](https://github.com/Maxine0917/Qiye/releases/latest)。
+
 ## 为什么做栖页
 
-查资料时，一篇文章带出另一篇文档，标签栏很快只剩一排小图标。明明打开过的页面找不到，又搜一遍；想读的内容怕关掉后忘记，就一直占着位置。忙了一天，还说不清时间花在了哪里。
-
-这些具体的使用困扰，构成了栖页的开发起点。它把**正在打开、留到稍后、已经看过**的网页放在同一个工作台上，让「找到 → 处理 → 留存 → 回顾」接起来。
+查资料时找不到开过的页面、想读的内容舍不得关、忙完说不清时间去了哪——这些日常困扰是栖页的开发起点。它把**正在打开、留到稍后、已经看过**的网页收在一起。
 
 | 日常遇到的问题 | 栖页提供的处理方式 |
 | --- | --- |
@@ -68,7 +107,7 @@
 
 ![浏览统计：依次展示今天、本周、本月、今年的累计时长与网站排行，数值为演示数据](docs/assets/browsing-stats.gif)
 
-*六张动图均取自实际扩展操作，使用独立浏览器中的示例网页和数据，添加了鼠标与步骤提示并做了剪辑。统计数值仅用于展示界面，不代表真实使用成果；录制日为周一，所以今天与本周累计相同。*
+*六张功能动图取自实际扩展操作，使用独立浏览器中的示例网页和数据，添加了鼠标与步骤提示并做了剪辑。统计数值仅用于展示界面，不代表真实使用成果；录制日为周一，所以今天与本周累计相同。*
 
 <details>
 <summary>查看静态工作台与设置截图</summary>
@@ -80,48 +119,6 @@
 界面支持浅色、深色或跟随系统；可设置空闲检测、不计时域名和历史保留期限。
 
 </details>
-
-## 快速安装
-
-### 让 Agent 帮你安装
-
-复制下面这句话，发给能联网并操作你电脑文件的 Agent：
-
-```text
-请帮我把 https://github.com/Maxine0917/Qiye 的栖页（TabNest）插件安装到本机 Chrome：先阅读仓库 README 和 docs/INSTALL.md，再从 https://github.com/Maxine0917/Qiye/releases/latest/download/TabNest-Chrome.zip 下载最新版插件包，解压到长期保留的目录并保留包内 LICENSE（若已有安装，先确认原安装路径再处理），找到并核对 manifest.json，给出它所在文件夹的绝对路径，再引导我在 chrome://extensions 开启开发者模式、点击“加载已解压的扩展程序”并选择该文件夹，最后点击浏览器的“＋”确认栖页正常显示。
-```
-
-Agent 会帮你准备安装文件；Chrome 中的加载操作仍需你确认。无需安装 Node.js、Python 或运行打包脚本。安装目录请保留，后续更新沿用同一路径。
-
-### 从插件包安装
-
-推荐普通用户使用此方式。扩展运行不需要 Node.js、Python 或服务器。
-
-1. [下载最新版 TabNest-Chrome.zip](https://github.com/Maxine0917/Qiye/releases/latest/download/TabNest-Chrome.zip)，解压到长期保留的目录。
-2. 在 Chrome 地址栏输入 `chrome://extensions`，打开右上角的**开发者模式**。
-3. 点击**加载已解压的扩展程序**，选择解压后直接包含 `manifest.json` 的目录。
-4. 新建一个标签页，进入栖页。
-
-Chrome 的「加载已解压的扩展程序」不能直接选择 ZIP 文件。插件包解压后的加载目录应直接包含 `manifest.json`、`index.html`、`background/`、`icons/` 和 `LICENSE`，无需再寻找 `extension/`。如果出现新标签页被扩展更改的提示，选择「保持现状」即可继续使用栖页。
-
-详细目录示例与常见问题见[安装与更新](docs/INSTALL.md)。本地脚本或 Actions 生成的 `栖页-插件.zip` 使用相同方式安装。
-
-### 从源码安装
-
-适合想查看或修改代码的用户。
-
-1. 下载 [TabNest-Source.zip](https://github.com/Maxine0917/Qiye/releases/latest/download/TabNest-Source.zip)，或在本仓库点击 **Code → Download ZIP**。
-2. 解压到长期保留的目录，在 Chrome 打开 `chrome://extensions` 并开启**开发者模式**。
-3. 点击**加载已解压的扩展程序**，选择源码中的 **`extension` 文件夹**，它直接包含 `manifest.json`。
-4. 点击浏览器的「＋」，确认栖页正常显示。
-
-完整源码包的加载路径为 `qiye/extension/`；Code 下载的 ZIP 外层文件夹名称随分支变化，始终选择其中的 `extension/`。根目录 `LICENSE` 请与源码一起保留。
-
-### 更新已有安装
-
-更新同一加载目录中的文件，再在 `chrome://extensions` 点击扩展卡片上的 **↻ 重新加载**，最后新建标签页。只刷新网页不会更新 Chrome 记录的扩展名称和图标。
-
-加载路径影响本地扩展身份，换目录后数据不会自动迁移。更多情况见[安装与更新](docs/INSTALL.md)。
 
 ## 问题反馈与功能建议
 
@@ -138,6 +135,9 @@ Chrome 的「加载已解压的扩展程序」不能直接选择 ZIP 文件。�
 目前支持浏览历史导出，尚不提供保存列表和设置的完整导入迁移工具。卸载前请保留需要的数据。
 
 ## 开发与验证
+
+<details>
+<summary>测试、打包、浏览器验收与项目结构</summary>
 
 项目使用原生 HTML、CSS 和 JavaScript ES Modules，无构建步骤即可加载。以下命令在项目根目录运行；测试需要 Node.js 22 或更高版本，打包需要 Python 3。
 
@@ -172,7 +172,7 @@ node extension/tests/browser-ui.mjs
 
 每次 push 和 pull request，GitHub Actions 都会执行回归测试、后台启动检查、真实 Chrome 浏览器验收和打包。通过后可在该次运行的 Artifacts 中下载 `qiye-packages`；`qiye-browser-check` 保存验收截图与结果，保留 14 天。浏览器操作失败时会尽可能额外保存 `failure.png` 和诊断结果，方便定位问题。
 
-## 项目结构
+### 项目结构
 
 ```text
 qiye/
@@ -191,6 +191,8 @@ qiye/
 ```
 
 [架构说明](docs/ARCHITECTURE.md) · [开发决策](docs/DECISIONS.md) · [更新记录](CHANGELOG.md) · [发布指南](docs/PUBLISH.md)
+
+</details>
 
 ## 许可与致谢
 

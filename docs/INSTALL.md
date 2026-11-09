@@ -4,8 +4,14 @@
 
 1. [下载最新版 TabNest-Chrome.zip](https://github.com/Maxine0917/Qiye/releases/latest/download/TabNest-Chrome.zip)，解压到长期保留的目录。
 2. 在 Chrome 地址栏输入 `chrome://extensions`，打开右上角的**开发者模式**。
-3. 点击**加载已解压的扩展程序**，选择解压后直接包含 `manifest.json` 的目录。
+3. 点击**加载未打包的扩展程序**，选择解压后直接包含 `manifest.json` 的目录。
 4. 点击浏览器的「＋」，确认栖页正常显示。如果 Chrome 提示新标签页已被扩展更改，选择**保持现状**。
+
+部分 Chrome 版本将第 3 步按钮称为「加载已解压的扩展程序」，作用相同。
+
+![完整安装：下载 ZIP、解压并核对 manifest.json、开启开发者模式、选择文件夹、点击浏览器加号打开栖页](assets/install.gif)
+
+动图使用 macOS、真实 v2.0.2 插件包和独立 Chrome 配置录制，添加了鼠标与步骤提示并做了剪辑。其他系统的解压和文件选择界面可能不同；Chrome 中的加载方式相同。
 
 插件包解压后的加载目录如下，文件夹名称可自行选择：
 
@@ -26,7 +32,7 @@ Chrome 不能直接加载 ZIP，也不能选择 `manifest.json` 文件本身。�
 ## 从源码安装（进阶）
 
 1. 下载 [TabNest-Source.zip](https://github.com/Maxine0917/Qiye/releases/latest/download/TabNest-Source.zip)，或使用仓库的 **Code → Download ZIP**，解压到长期保留的目录。
-2. 在 `chrome://extensions` 开启**开发者模式**，点击**加载已解压的扩展程序**。
+2. 在 `chrome://extensions` 开启**开发者模式**，点击**加载未打包的扩展程序**（部分版本叫「加载已解压的扩展程序」）。
 3. 选择源码中的 `extension/` 文件夹，再点击浏览器的「＋」验证。
 
 `TabNest-Source.zip` 解压后为 `qiye/extension/`；Code 下载的 ZIP 外层目录随分支变化，选择其中的 `extension/` 即可：
